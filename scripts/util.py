@@ -19,20 +19,31 @@ def list_frames(type: str, action: str) -> list[pygame.Surface]:
     return imgs
 
 
-def get_animation(entity, frame_duration: int) -> dict:
-        imgs = entity['assets'][entity['type']][entity['action']]
+def get_animation(entity, frame_duration: int, loop: bool = True) -> dict:
+        asset = entity['assets'][entity['type']][entity['action']]
         return {
-            'imgs': imgs,
+            'imgs': asset[0],
             'frame': 0,
-            'duration': frame_duration,
-            'len': len(imgs) * frame_duration,
-            'action': entity['action']
+            'duration': asset[1],
+            'len': len(asset[0]) * asset[1],
+            'action': entity['action'],
+            'loop': asset[2]
         }
 
 def get_frame(entity) -> pygame.Surface:
     if entity['action'] != entity['animation']['action']:
-        entity['animation'] = get_animation(entity, 10)
+        entity['animation'] = get_animation(entity, 5)
     animation = entity['animation']
-    animation['frame'] = (animation['frame'] + 1) % animation['len']
-    frame = animation['frame'] // animation['duration']
-    return animation['imgs'][frame]
+
+    if animation['loop']:
+        frame = animation['frame'] % animation['len']
+        frame = frame // animation['duration']
+        animation['frame'] = (animation['frame'] + 1) % animation['len']
+        return animation['imgs'][frame]
+    else:
+         if animation['frame'] == animation['len'] - 2:
+              entity['action'] = 'idle'
+         animation['frame'] += 1
+         frame = animation['frame'] // animation['duration']
+         return animation['imgs'][frame]
+         

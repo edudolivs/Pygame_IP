@@ -15,8 +15,10 @@ def main():
             'background': pygame.image.load('data/imgs/environment/background.png')
         },
         'player':{
-            'walk': util.list_frames('player', 'walk'),
-            'idle': util.list_frames('player', 'idle')
+            'walk': (util.list_frames('player', 'walk'), 5, True),
+            'idle': (util.list_frames('player', 'idle'), 5, True),
+            'jump': (util.list_frames('player', 'jump'), 5, True),
+            'dash': (util.list_frames('player', 'dash'), 10, False)
         }
     }
 
@@ -25,7 +27,7 @@ def main():
 
     while running:
 
-        print(player['side'])
+        print(player['vel'], player['on_ground'])
 
         screen.blit(ASSETS['environment']['background'], (0,0))
         screen.blit(ASSETS['environment']['floor'], (0, 0))
@@ -44,7 +46,10 @@ def main():
                     movement[1] = True
                 if event.key == pygame.K_w and player['on_ground']:
                     entity.jump(player)
-                    player['on_ground'] = False
+                if event.key == pygame.K_j:
+                    entity.attack(player)
+                if event.key == pygame.K_k and player['on_ground']:
+                    entity.dash(player)
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_a:
                     movement[0] = False

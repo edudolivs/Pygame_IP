@@ -9,7 +9,8 @@ def get_entity(assets, type: str, pos: list | tuple, size: tuple) -> dict:
         'size': size,
         'vel': [0,0],
         'action': 'idle',
-        'side': 1
+        'side': 1,
+        'on_ground': False
     }
 
 def get_player(assets, pos, size):
@@ -26,20 +27,27 @@ def get_rect(entity):
 
 def update_entity(entity, movement=(0, 0)) -> None:
 
-    entity['vel'][1] += 5
-
     frame_movement = (entity['vel'][0] + movement[0], entity['vel'][1] + movement[1])
 
-    if frame_movement[0]:
-        entity['action'] = 'walk'
-    else:
-        entity['action'] = 'idle'
+    if entity['on_ground']:
+        if frame_movement[0]:
+            entity['action'] = 'walk'
+        else:
+            entity['action'] = 'idle'
 
     entity['pos'][0] += frame_movement[0]*10
     entity['pos'][1] += frame_movement[1]
 
 
 def update_player(entity, movement=(0, 0)) -> None:
+
+    if entity['action'] == 'dash':
+        entity['vel'][0] = entity['side']*2
+        movement = (0, 0)
+    else:
+        entity['vel'][0] = 0
+        entity['vel'][1] += 5
+
     update_entity(entity, movement)
 
     if entity['side'] != movement[0] and movement[0] != 0:
@@ -60,6 +68,8 @@ def render_entity(entity: dict, surface: pygame.Surface) -> None:
 
 
 def jump(entity):
+    entity['on_ground'] = False
+    entity['action'] = 'jump'
     entity['vel'][1] = -50
 
 
@@ -67,4 +77,6 @@ def attack(entity):
     pass
 
 def dash(entity):
-    pass
+    entity['on_ground'] = False
+    entity['action'] = 'dash'
+
