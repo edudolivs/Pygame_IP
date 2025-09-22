@@ -44,7 +44,7 @@ def update_player(entity, movement=(0, 0)) -> None:
     if entity['action'] == 'roll':
         entity['vel'][0] = entity['side']*2
         movement = (0, 0)
-    elif entity['action'] == 'attk':
+    elif entity['action'] == 'attk' or entity['action'] == 'pray':
         movement = (0, 0)
     else:
         entity['vel'][0] = 0
@@ -75,7 +75,7 @@ def jump(entity):
     entity['vel'][1] = -50
 
 
-def attack(entity):
+def attk(entity):
     entity['on_ground'] = False
     entity['action'] = 'attk'
 
@@ -83,3 +83,9 @@ def roll(entity):
     entity['on_ground'] = False
     entity['action'] = 'roll'
 
+def pray(entity):
+    entity['on_ground'] = False
+    entity['action'] = 'pray'
+
+
+    

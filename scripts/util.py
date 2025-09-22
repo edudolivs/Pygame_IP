@@ -20,7 +20,7 @@ def list_frames(type: str, action: str) -> list[pygame.Surface]:
 
 
 def get_animation(entity: dict, frame_duration: int, loop: bool = True) -> dict:
-        asset = entity['assets'][entity['type']][entity['action']]
+        asset = entity['assets']["imgs"][entity['type']][entity['action']]
         return {
             'imgs': asset[0],
             'frame': 0,
@@ -47,3 +47,5 @@ def get_frame(entity) -> pygame.Surface:
          frame = animation['frame'] // animation['duration']
          return animation['imgs'][frame]
          
+def sound(actor, event):
+     pass
