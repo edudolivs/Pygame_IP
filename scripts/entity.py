@@ -41,8 +41,10 @@ def update_entity(entity, movement=(0, 0)) -> None:
 
 def update_player(entity, movement=(0, 0)) -> None:
 
-    if entity['action'] == 'dash':
+    if entity['action'] == 'roll':
         entity['vel'][0] = entity['side']*2
+        movement = (0, 0)
+    elif entity['action'] == 'attk':
         movement = (0, 0)
     else:
         entity['vel'][0] = 0
@@ -55,8 +57,8 @@ def update_player(entity, movement=(0, 0)) -> None:
 
     if entity['pos'][0] > 1150:
         entity['pos'][0] = 1150
-    if entity['pos'][0] < -80:
-        entity['pos'][0] = -80
+    if entity['pos'][0] < -60:
+        entity['pos'][0] = -60
     if entity['pos'][1] > 475:
         entity['pos'][1] = 475
         entity['vel'][1] = 0
@@ -74,9 +76,10 @@ def jump(entity):
 
 
 def attack(entity):
-    pass
-
-def dash(entity):
     entity['on_ground'] = False
-    entity['action'] = 'dash'
+    entity['action'] = 'attk'
+
+def roll(entity):
+    entity['on_ground'] = False
+    entity['action'] = 'roll'
 

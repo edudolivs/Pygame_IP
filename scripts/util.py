@@ -19,7 +19,7 @@ def list_frames(type: str, action: str) -> list[pygame.Surface]:
     return imgs
 
 
-def get_animation(entity, frame_duration: int, loop: bool = True) -> dict:
+def get_animation(entity: dict, frame_duration: int, loop: bool = True) -> dict:
         asset = entity['assets'][entity['type']][entity['action']]
         return {
             'imgs': asset[0],
