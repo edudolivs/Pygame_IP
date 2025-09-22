@@ -8,16 +8,17 @@ def main_menu(screen, clock):
     options_button = pygame.Rect(screen.get_width() / 2 - 100, 400, 200, 50)
     quit_button = pygame.Rect(screen.get_width() / 2 - 100, 500, 200, 50)
 
-    while True:
+    choice = None
+    while choice is None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "quit"
+                choice = "quit"
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button.collidepoint(event.pos):
-                    return "play"
+                    choice = "play"
                 if quit_button.collidepoint(event.pos):
-                    return "quit"
+                    choice = "quit"
         
         screen.fill((10, 20, 30))
 
@@ -38,6 +39,8 @@ def main_menu(screen, clock):
 
         pygame.display.flip()
         clock.tick(30)
+    
+    return choice
 
 
 

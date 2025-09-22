@@ -80,18 +80,15 @@ def main():
         }
     }
 
-    
-    while True:
+    choice = None
+    while choice != 'quit':
         choice = menu.main_menu(screen, clock)
 
-        if choice == "play":
+        if choice == 'play':
             game_loop(screen, clock, ASSETS)
         
-        if choice == "options":
+        if choice == 'options':
             pass
-
-        if choice == "quit":
-            break
 
 
     
