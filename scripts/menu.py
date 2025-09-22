@@ -5,7 +5,8 @@ def main_menu(screen, clock):
     pygame.display.set_caption("Mad and madder")
 
     play_button = pygame.Rect(screen.get_width() / 2 - 100, 300, 200 , 50)
-    quit_button = pygame.Rect(screen.get_width() / 2 - 100, 400, 200, 50)
+    options_button = pygame.Rect(screen.get_width() / 2 - 100, 400, 200, 50)
+    quit_button = pygame.Rect(screen.get_width() / 2 - 100, 500, 200, 50)
 
     while True:
         for event in pygame.event.get():
@@ -26,6 +27,10 @@ def main_menu(screen, clock):
         pygame.draw.rect(screen, (0, 150, 0), play_button)
         play_text = font.render("Play", True, (255, 255, 255))
         screen.blit(play_text, (play_button.x + (play_button.width - play_text.get_width()) / 2, play_button.y))
+
+        pygame.draw.rect(screen, (0, 20, 150), options_button)
+        options_button_text = font.render("Options", True, (255, 255, 255))
+        screen.blit(options_button_text, (options_button.x + (options_button.width - options_button_text.get_width()) / 2, options_button.y))
 
         pygame.draw.rect(screen, (150, 0, 0), quit_button)
         quit_text = font.render('Sair', True, (255, 255, 255))

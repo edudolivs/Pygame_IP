@@ -86,6 +86,9 @@ def main():
 
         if choice == "play":
             game_loop(screen, clock, ASSETS)
+        
+        if choice == "options":
+            pass
 
         if choice == "quit":
             break
