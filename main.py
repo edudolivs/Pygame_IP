@@ -18,11 +18,13 @@ def game_loop(screen, clock, ASSETS):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+               
                 quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
                     movement[0] = True
                 if event.key == pygame.K_d:
+               
                     movement[1] = True
                 if event.key == pygame.K_w and player['on_ground']:
                     entity.jump(player)
@@ -32,8 +34,14 @@ def game_loop(screen, clock, ASSETS):
                     entity.roll(player)
                 if event.key == pygame.K_l and player['on_ground']:
                     entity.pray(player)
+                
                 if event.key == pygame.K_ESCAPE:
-                    menu.pause()
+                    choice = menu.pause_menu(screen, clock)
+                    if choice == "main_menu":
+                        return "main_menu"
+                    if choice == "quit_game":
+                        return "quit"
+            
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_a:
                     movement[0] = False
@@ -42,22 +50,16 @@ def game_loop(screen, clock, ASSETS):
                 if event.key == pygame.K_l and player['action'] == 'pray':
                     player['action'] = 'idle'
                 
-
-
         pygame.display.flip()
-    
         clock.tick(30)
 
-    return
-
+    return "main_menu"
 
 def main():
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     clock = pygame.time.Clock()
     
-    
-
     ASSETS = {
         'imgs': {
             'environment':{
@@ -71,6 +73,9 @@ def main():
                 'roll': (util.list_frames('player', 'roll'), 3, False),
                 'attk': (util.list_frames('player', 'attk'), 10, False),
                 'pray': (util.list_frames('player', 'pray'), 30, False)
+            },
+            "window": { 
+                "icon": pygame.image.load("data/imgs/window/icon.png")
             }
         },
         'audio':{
@@ -79,6 +84,9 @@ def main():
             }
         }
     }
+    
+    pygame.display.set_caption("Mad and madder")
+    pygame.display.set_icon(ASSETS["imgs"]["window"]["icon"])
 
     choice = None
     while choice != 'quit':
@@ -89,9 +97,6 @@ def main():
         
         if choice == 'options':
             pass
-
-
-    
 
     pygame.quit()
 
