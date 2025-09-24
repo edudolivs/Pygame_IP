@@ -1,9 +1,20 @@
 import pygame
-from scripts import entity, util,action, menu
+from scripts import entity, util, action, menu
 
 def game_loop(screen, clock, ASSETS):
-    player = entity.get_player(ASSETS, (100, 475), (192, 192))
-    boss = entity.get_boss(ASSETS, (600, 475), (192, 192))
+    game = {
+        'screen': screen,
+        'clock': clock,
+        'assets': ASSETS
+    }
+    game.update(
+        {
+            'player': entity.get_player(game, (100, 475), (192, 192)),
+            'boss': entity.get_boss(game, (600, 475), (192, 192))
+        }
+    )
+    player = game['player']
+    boss = game['boss']
 
     choice = 'play'
     while choice == 'play':
@@ -11,7 +22,7 @@ def game_loop(screen, clock, ASSETS):
         screen.blit(ASSETS["imgs"]['environment']['background'], (0,0))
         screen.blit(ASSETS["imgs"]['environment']['floor'], (0, 0))
 
-        entity.update_boss(boss, player)
+        entity.update_boss(boss)
         entity.update_player(player)
         
         entity.render_entity(boss, screen)
@@ -68,13 +79,14 @@ def main():
                 'idle': (util.list_frames('player', 'idle'), 5, None),
                 'jump': (util.list_frames('player', 'jump'), 5, None),
                 'roll': (util.list_frames('player', 'roll'), 3, action.idle),
-                'attk': (util.list_frames('player', 'attk'), 10, action.idle),
+                'attk': (util.list_frames('player', 'attk'), 10, action.player_hit),
                 'pray': (util.list_frames('player', 'pray'), 30, action.end_pray)
             },
             'boss':{
                 'walk': (util.list_frames('boss', 'walk'), 10, action.idle),
                 'idle': (util.list_frames('boss', 'idle'), 5, action.idle),
-                'attk': (util.list_frames('player', 'attk'), 30, action.boss_attk),
+                'sweep': (util.list_frames('player', 'attk'), 50, action.boss_sweep),
+                'slam': (util.list_frames('player', 'attk'), 50, action.boss_slam),
                 'cool': (util.list_frames('player', 'pray'), 30, action.idle),
             },
             "window": { 

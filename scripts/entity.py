@@ -3,9 +3,10 @@ from scripts import action
 from scripts.util import get_frame, get_animation
 import random
 
-def get_entity(assets, type, pos, size):
+def get_entity(game, type, pos, size):
     entity = {
-        'assets': assets,
+        'game': game,
+        'assets': game['assets'],
         'type': type,
         'pos': list(pos),
         'size': size,
@@ -87,7 +88,8 @@ def update_player(player):
     if player['side'] == -movement:
         player['side'] *= -1
 
-def update_boss(boss, player):
+def update_boss(boss):
+    player = boss['game']['player']
 
     dist = player['pos'][0] - boss['pos'][0]
 
@@ -95,15 +97,15 @@ def update_boss(boss, player):
         boss['side'] = dist/abs(dist)
     
     if boss['action'] != 'cool':
-        if abs(dist) > 300:
+        if abs(dist) > 250:
             if boss['action'] == 'idle':
                 boss['vel'][0] = 0
-                boss['action'] = random.choice(['walk', 'attk'])
+                boss['action'] = random.choice(['walk', 'sweep'])
             if boss['action'] == 'walk':
                 boss['vel'][0] = dist/abs(dist)
-        else:
+        elif boss['action'] in {'idle', 'walk'}:
             boss['vel'] = [0, 0]
-            boss['action'] = random.choice(['attk','attk'])
+            boss['action'] = random.choice(['sweep','slam'])
 
     update_entity(boss)
 
