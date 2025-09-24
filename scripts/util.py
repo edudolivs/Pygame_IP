@@ -19,33 +19,26 @@ def list_frames(type: str, action: str) -> list[pygame.Surface]:
     return imgs
 
 
-def get_animation(entity: dict, frame_duration: int, loop: bool = True) -> dict:
+def get_animation(entity):
         asset = entity['assets']["imgs"][entity['type']][entity['action']]
         return {
-            'imgs': asset[0],
-            'frame': 0,
+            'frames': asset[0],
+            'tick': 0,
             'duration': asset[1],
             'len': len(asset[0]) * asset[1],
             'action': entity['action'],
-            'loop': asset[2]
+            'effect': asset[2]
         }
 
 def get_frame(entity) -> pygame.Surface:
     if entity['action'] != entity['animation']['action']:
-        entity['animation'] = get_animation(entity, 5)
+        entity['animation'] = get_animation(entity)
     animation = entity['animation']
 
-    if animation['loop']:
-        frame = animation['frame'] % animation['len']
-        frame = frame // animation['duration']
-        animation['frame'] = (animation['frame'] + 1) % animation['len']
-        return animation['imgs'][frame]
-    else:
-         if animation['frame'] == animation['len'] - 2:
-              entity['action'] = 'idle'
-         animation['frame'] += 1
-         frame = animation['frame'] // animation['duration']
-         return animation['imgs'][frame]
+    tick = animation['tick'] // animation['duration']
+    animation['tick'] = (animation['tick'] + 1) % animation['len']
+    print(animation['action'], tick) if entity['type'] == 'boss' else None
+    return animation['frames'][tick]
          
 def sound(actor, event):
      pass

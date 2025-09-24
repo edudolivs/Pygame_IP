@@ -1,59 +1,56 @@
 import pygame
-import random
-from scripts import entity, util, menu
+from scripts import entity, util,action, menu
 
 def game_loop(screen, clock, ASSETS):
-    player = entity.get_player(ASSETS, (100, 475), (64, 64))
-    movement = [False, False]
-    running = True
+    player = entity.get_player(ASSETS, (100, 475), (192, 192))
+    boss = entity.get_boss(ASSETS, (600, 475), (192, 192))
 
-    while running:
+    choice = 'play'
+    while choice == 'play':
 
         screen.blit(ASSETS["imgs"]['environment']['background'], (0,0))
         screen.blit(ASSETS["imgs"]['environment']['floor'], (0, 0))
+
+        entity.update_boss(boss, player)
+        entity.update_player(player)
         
-        entity.update_player(player, (movement[1] - movement[0], 0))
-        entity.render_entity(player, screen)
+        entity.render_entity(boss, screen)
+        entity.render_player(player, screen)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
-               
-                quit()
+                choice = 'quit'
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
-                    movement[0] = True
+                    player['mov'][0] = True
                 if event.key == pygame.K_d:
-               
-                    movement[1] = True
+                    player['mov'][1] = True
                 if event.key == pygame.K_w and player['on_ground']:
-                    entity.jump(player)
+                    action.jump(player)
                 if event.key == pygame.K_j and player['on_ground']:
-                    entity.attk(player)
+                    action.attk(player)
                 if event.key == pygame.K_k and player['on_ground']:
-                    entity.roll(player)
+                    action.roll(player)
                 if event.key == pygame.K_l and player['on_ground']:
-                    entity.pray(player)
+                    action.pray(player)
                 
                 if event.key == pygame.K_ESCAPE:
+                    player['mov'] = [0,0]
                     choice = menu.pause_menu(screen, clock)
-                    if choice == "main_menu":
-                        return "main_menu"
-                    if choice == "quit_game":
-                        return "quit"
             
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_a:
-                    movement[0] = False
+                    player['mov'][0] = False
                 if event.key == pygame.K_d:
-                    movement[1] = False
+                    player['mov'][1] = False
                 if event.key == pygame.K_l and player['action'] == 'pray':
                     player['action'] = 'idle'
                 
         pygame.display.flip()
         clock.tick(30)
-
-    return "main_menu"
+        
+    return choice
 
 def main():
     pygame.init()
@@ -67,12 +64,18 @@ def main():
                 'background': pygame.image.load('data/imgs/environment/background.png')
             },
             'player':{
-                'walk': (util.list_frames('player', 'walk'), 5, True),
-                'idle': (util.list_frames('player', 'idle'), 5, True),
-                'jump': (util.list_frames('player', 'jump'), 5, True),
-                'roll': (util.list_frames('player', 'roll'), 3, False),
-                'attk': (util.list_frames('player', 'attk'), 10, False),
-                'pray': (util.list_frames('player', 'pray'), 30, False)
+                'walk': (util.list_frames('player', 'walk'), 5, None),
+                'idle': (util.list_frames('player', 'idle'), 5, None),
+                'jump': (util.list_frames('player', 'jump'), 5, None),
+                'roll': (util.list_frames('player', 'roll'), 3, action.idle),
+                'attk': (util.list_frames('player', 'attk'), 10, action.idle),
+                'pray': (util.list_frames('player', 'pray'), 30, action.end_pray)
+            },
+            'boss':{
+                'walk': (util.list_frames('boss', 'walk'), 10, action.idle),
+                'idle': (util.list_frames('boss', 'idle'), 5, action.idle),
+                'attk': (util.list_frames('player', 'attk'), 30, action.boss_attk),
+                'cool': (util.list_frames('player', 'pray'), 30, action.idle),
             },
             "window": { 
                 "icon": pygame.image.load("data/imgs/window/icon.png")
@@ -93,7 +96,7 @@ def main():
         choice = menu.main_menu(screen, clock)
 
         if choice == 'play':
-            game_loop(screen, clock, ASSETS)
+            choice = game_loop(screen, clock, ASSETS)
         
         if choice == 'options':
             pass

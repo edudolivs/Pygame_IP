@@ -1,8 +1,10 @@
 import pygame
+from scripts import action
 from scripts.util import get_frame, get_animation
+import random
 
-def get_entity(assets, type: str, pos: list | tuple, size: tuple) -> dict:
-    return {
+def get_entity(assets, type, pos, size):
+    entity = {
         'assets': assets,
         'type': type,
         'pos': list(pos),
@@ -10,82 +12,107 @@ def get_entity(assets, type: str, pos: list | tuple, size: tuple) -> dict:
         'vel': [0,0],
         'action': 'idle',
         'side': 1,
-        'on_ground': False
+        'on_ground': True,
+        'base_speed': 1
     }
+    entity['animation'] = get_animation(entity)
+    return entity
 
 def get_player(assets, pos, size):
     player = get_entity(assets, 'player', pos, size)
     player.update(
         {
-            'animation': get_animation(player, 10)
+            'mov': [False, False],
+            'blessed': False,
+            'base_speed': 10
         }
     )
     return player
 
+def get_boss(assets, pos, size):
+    boss = get_entity(assets, 'boss', pos, size)
+    boss.update(
+        {
+            'base_speed': 5,
+            'attk_count': 5
+        }
+    )
+    return boss
+
 def get_rect(entity):
     return pygame.Rect(*entity['pos'], *entity['size'])
 
-def update_entity(entity, movement=(0, 0)) -> None:
+def update_entity(entity, movement = 0):
 
-    frame_movement = (entity['vel'][0] + movement[0], entity['vel'][1] + movement[1])
+    frame_movement = (entity['vel'][0] + movement, entity['vel'][1])
 
-    if entity['on_ground']:
-        if frame_movement[0]:
-            entity['action'] = 'walk'
-        else:
-            entity['action'] = 'idle'
+    animation = entity['animation']
+    if animation['effect'] and animation['tick'] == animation['len'] - 1:
+        animation['effect'](entity)
 
-    entity['pos'][0] += frame_movement[0]*10
+    entity['pos'][0] += frame_movement[0] * entity['base_speed']
     entity['pos'][1] += frame_movement[1]
 
 
-def update_player(entity, movement=(0, 0)) -> None:
+def update_player(player):
 
-    if entity['action'] == 'roll':
-        entity['vel'][0] = entity['side']*2
-        movement = (0, 0)
-    elif entity['action'] == 'attk' or entity['action'] == 'pray':
-        movement = (0, 0)
+    movement = player['mov'][1] - player['mov'][0]
+
+    if player['action'] == 'roll':
+        player['vel'][0] = player['side'] * 2
+        movement = 0
+    elif player['action'] == 'attk' or player['action'] == 'pray':
+        movement = 0
     else:
-        entity['vel'][0] = 0
-        entity['vel'][1] += 5
+        player['vel'][0] = 0
+        player['vel'][1] += 5
 
-    update_entity(entity, movement)
+    update_entity(player, movement)
 
-    if entity['side'] != movement[0] and movement[0] != 0:
-        entity['side'] = movement[0]
-
-    if entity['pos'][0] > 1150:
-        entity['pos'][0] = 1150
-    if entity['pos'][0] < -60:
-        entity['pos'][0] = -60
-    if entity['pos'][1] > 475:
-        entity['pos'][1] = 475
-        entity['vel'][1] = 0
-        entity['on_ground'] = True
-
-
-def render_entity(entity: dict, surface: pygame.Surface) -> None:
-    surface.blit(pygame.transform.flip(get_frame(entity), not bool(entity['side'] + 1), False), entity['pos'])
-
-
-def jump(entity):
-    entity['on_ground'] = False
-    entity['action'] = 'jump'
-    entity['vel'][1] = -50
-
-
-def attk(entity):
-    entity['on_ground'] = False
-    entity['action'] = 'attk'
-
-def roll(entity):
-    entity['on_ground'] = False
-    entity['action'] = 'roll'
-
-def pray(entity):
-    entity['on_ground'] = False
-    entity['action'] = 'pray'
-
-
+    if player['pos'][0] > 1150:
+        player['pos'][0] = 1150
+    if player['pos'][0] < -60:
+        player['pos'][0] = -60
+    if player['pos'][1] > 475:
+        player['pos'][1] = 475
+        player['vel'][1] = 0
+        player['on_ground'] = True
     
+    if player['on_ground']:
+        if movement:
+            player['action'] = 'walk'
+        else:
+            player['action'] = 'idle'
+    
+    if player['side'] == -movement:
+        player['side'] *= -1
+
+def update_boss(boss, player):
+
+    dist = player['pos'][0] - boss['pos'][0]
+
+    if boss['action'] == 'idle' and dist:
+        boss['side'] = dist/abs(dist)
+    
+    if boss['action'] != 'cool':
+        if abs(dist) > 300:
+            if boss['action'] == 'idle':
+                boss['vel'][0] = 0
+                boss['action'] = random.choice(['walk', 'attk'])
+            if boss['action'] == 'walk':
+                boss['vel'][0] = dist/abs(dist)
+        else:
+            boss['vel'] = [0, 0]
+            boss['action'] = random.choice(['attk','attk'])
+
+    update_entity(boss)
+
+def render_entity(entity, surface):
+    surface.blit(pygame.transform.flip(get_frame(entity), bool(entity['side'] - 1), False), entity['pos'])
+
+def render_player(player, surface):
+    if player['blessed'] == True:
+        center = (player['pos'][0] + player['size'][0] // 2, player['pos'][1] + player['size'][1] // 2 + 25)
+        pygame.draw.circle(surface, 'light yellow', center, 64)
+    render_entity(player, surface)
+

@@ -55,17 +55,17 @@ def pause_menu(screen, clock):
     while choice is None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "quit_game"
+                choice = "quit"
             
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    return "resume"
+                    choice = "play"
                 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if resume_button.collidepoint(event.pos):
-                    return "resume"
+                    choice = "play"
                 if main_menu_button.collidepoint(event.pos):
-                    return "main_menu"
+                    choice = "main_menu"
                 
         screen.blit(overlay, (0, 0))
 
@@ -82,3 +82,5 @@ def pause_menu(screen, clock):
 
         pygame.display.flip()
         clock.tick(30)
+        
+    return choice
