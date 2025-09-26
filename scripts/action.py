@@ -22,7 +22,7 @@ def player_hit(player):
         player['pos'][0] + player['size'][0] // 2 - hitbox[0] // 2 + player['side'] * hitbox[0],
         player['pos'][1] + player['size'][1] // 2
     )
-    pygame.draw.rect(player['game']['screen'], 'green', (*pos, *hitbox))
+    #pygame.draw.rect(player['game']['screen'], 'green', (*pos, *hitbox))
     player['action'] = 'idle'
 
 def roll(entity):
@@ -43,7 +43,7 @@ def boss_sweep(boss):
         boss['pos'][0] + boss['size'][0] // 2 - hitbox[0] // 2 + boss['side'] * 150,
         boss['pos'][1] + boss['size'][1] // 2 - hitbox[1] // 2
     )
-    pygame.draw.rect(boss['game']['screen'], 'red', (*pos, *hitbox))
+    #pygame.draw.rect(boss['game']['screen'], 'red', (*pos, *hitbox))
     
     boss['attk_count'] = boss['attk_count'] - 1
     if boss['attk_count'] == 0:
@@ -58,7 +58,7 @@ def boss_slam(boss):
         boss['pos'][0] + boss['size'][0] // 2 - hitbox[0] // 2,
         boss['pos'][1] + boss['size'][1] // 2 - hitbox[1] // 2
     )
-    pygame.draw.rect(boss['game']['screen'], 'red', (*pos, *hitbox))
+    #pygame.draw.rect(boss['game']['screen'], 'red', (*pos, *hitbox))
     
     boss['attk_count'] = boss['attk_count'] - 1
     if boss['attk_count'] == 0:
