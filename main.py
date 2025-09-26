@@ -10,7 +10,7 @@ def game_loop(screen, clock, ASSETS):
     game.update(
         {
             'player': entity.get_player(game, (100, 475), (192, 192)),
-            'boss': entity.get_boss(game, (600, 475), (192, 192))
+            'boss': entity.get_boss(game, (600, 475-200), (300 , 300))
         }
     )
     player = game['player']
@@ -79,15 +79,15 @@ def main():
                 'idle': (util.list_frames('player', 'idle'), 5, None),
                 'jump': (util.list_frames('player', 'jump'), 5, None),
                 'roll': (util.list_frames('player', 'roll'), 3, action.idle),
-                'attk': (util.list_frames('player', 'attk'), 10, action.player_hit),
-                'pray': (util.list_frames('player', 'pray'), 30, action.end_pray)
+                'attk': (util.list_frames('player', 'attk'), 2, action.player_hit),
+                'pray': (util.list_frames('player', 'pray'), 3, action.end_pray)
             },
             'boss':{
                 'walk': (util.list_frames('boss', 'walk'), 10, action.idle),
                 'idle': (util.list_frames('boss', 'idle'), 5, action.idle),
-                'sweep': (util.list_frames('player', 'attk'), 50, action.boss_sweep),
-                'slam': (util.list_frames('player', 'attk'), 50, action.boss_slam),
-                'cool': (util.list_frames('player', 'pray'), 30, action.idle),
+                'sweep': (util.list_frames('boss', 'attk2'), 10, action.boss_sweep),
+                'slam': (util.list_frames('boss', 'attk'), 10, action.boss_slam),
+                'cool': (util.list_frames('boss', 'cool'), 10, action.idle),
             },
             "window": { 
                 "icon": pygame.image.load("data/imgs/window/icon.png")
