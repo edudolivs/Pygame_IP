@@ -83,7 +83,7 @@ def main():
                 'pray': (util.list_frames('player', 'pray'), 3, action.end_pray)
             },
             'boss':{
-                'walk': (util.list_frames('boss', 'walk'), 10, action.idle),
+                'walk': (util.list_frames('boss', 'walk'), 5, action.idle),
                 'idle': (util.list_frames('boss', 'idle'), 5, action.idle),
                 'sweep': (util.list_frames('boss', 'attk2'), 5, action.boss_sweep),
                 'slam': (util.list_frames('boss', 'attk'), 5, action.boss_slam),
