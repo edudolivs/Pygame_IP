@@ -9,7 +9,7 @@ def game_loop(screen, clock, ASSETS):
     }
     game.update(
         {
-            'player': entity.get_player(game, (100, 475), (192, 192)),
+            'player': entity.get_player(game, (100, 475), (128, 128)),
             'boss': entity.get_boss(game, (600, 475-200), (300 , 300))
         }
     )
@@ -85,9 +85,9 @@ def main():
             'boss':{
                 'walk': (util.list_frames('boss', 'walk'), 10, action.idle),
                 'idle': (util.list_frames('boss', 'idle'), 5, action.idle),
-                'sweep': (util.list_frames('boss', 'attk2'), 10, action.boss_sweep),
-                'slam': (util.list_frames('boss', 'attk'), 10, action.boss_slam),
-                'cool': (util.list_frames('boss', 'cool'), 10, action.idle),
+                'sweep': (util.list_frames('boss', 'attk2'), 5, action.boss_sweep),
+                'slam': (util.list_frames('boss', 'attk'), 5, action.boss_slam),
+                'cool': (util.list_frames('boss', 'cool'), 20, action.idle),
             },
             "window": { 
                 "icon": pygame.image.load("data/imgs/window/icon.png")
