@@ -67,7 +67,7 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     clock = pygame.time.Clock()
-    
+
     ASSETS = {
         'imgs': {
             'environment':{
@@ -99,7 +99,7 @@ def main():
             }
         }
     }
-    
+
     pygame.display.set_caption("Mad and madder")
     pygame.display.set_icon(ASSETS["imgs"]["window"]["icon"])
 
