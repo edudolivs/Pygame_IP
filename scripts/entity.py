@@ -3,38 +3,44 @@ from scripts import action
 from scripts.util import get_frame, get_animation
 import random
 
-def get_entity(game, type, pos, size):
+def get_entity(game, type, pos):
     entity = {
         'game': game,
         'assets': game['assets'],
         'type': type,
         'pos': list(pos),
-        'size': size,
+        'size': (0,0),
         'vel': [0,0],
         'action': 'idle',
         'side': 1,
         'on_ground': True,
-        'base_speed': 1
+        'base_speed': 1,
+        'offset': (0, 0)
     }
     entity['animation'] = get_animation(entity)
     return entity
 
-def get_player(assets, pos, size):
-    player = get_entity(assets, 'player', pos, size)
+def get_player(game, pos):
+    player = get_entity(game, 'player', pos)
     player.update(
         {
+            'size': (96, 128),
             'mov': [False, False],
             'blessed': False,
-            'base_speed': 10
+            'base_speed': 10,
+            'offset': (-144, -256)
         }
     )
     return player
 
-def get_boss(assets, pos, size):
-    boss = get_entity(assets, 'boss', pos, size)
+def get_boss(game, pos):
+    boss = get_entity(game, 'boss', pos)
     boss.update(
         {
+            'type': 'boss',
+            'size': (128, 256),
             'base_speed': 5,
+            'offset': (-128, -128),
             'attk_count': 5
         }
     )
@@ -70,12 +76,12 @@ def update_player(player):
 
     update_entity(player, movement)
 
-    if player['pos'][0] > 1150:
-        player['pos'][0] = 1150
-    if player['pos'][0] < -60:
-        player['pos'][0] = -60
-    if player['pos'][1] > 475:
-        player['pos'][1] = 475
+    if player['pos'][0] > 1208:
+        player['pos'][0] = 1208
+    if player['pos'][0] < -24:
+        player['pos'][0] = -24
+    if player['pos'][1] > 528:
+        player['pos'][1] = 528
         player['vel'][1] = 0
         player['on_ground'] = True
     
@@ -110,11 +116,25 @@ def update_boss(boss):
     update_entity(boss)
 
 def render_entity(entity, surface):
-    surface.blit(pygame.transform.flip(get_frame(entity), bool(entity['side'] - 1), False), entity['pos'])
+    pygame.draw.rect(surface, 'green', (*entity['pos'], *entity['size']))
+    surface.blit(
+        pygame.transform.flip(get_frame(entity),bool(entity['side'] - 1), False),
+        (
+            entity['pos'][0] + entity['offset'][0],
+            entity['pos'][1] + entity['offset'][1]
+        )
+    )
 
-def render_player(player, surface):
-    if player['blessed'] == True:
-        center = (player['pos'][0] + player['size'][0] // 2, player['pos'][1] + player['size'][1] // 2 + 25)
-        pygame.draw.circle(surface, 'light yellow', center, 64)
+
+def render_player(player, surface: pygame.Surface):
     render_entity(player, surface)
+    if player['blessed'] == True:
+        print('blessed')
+        surface.blit(
+            player['game']['assets']['imgs']['player']['aura'],
+            (
+            player['pos'][0] + player['offset'][0],
+            player['pos'][1] + player['offset'][1]
+            )
+        )
 
