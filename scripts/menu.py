@@ -28,13 +28,13 @@ def update_hover_button(button):
         button["actual_text_color"] = button["base_text_color"]
     
 
-def check_click_button(evento, button):
-    if evento.type == pygame.MOUSEBUTTONDOWN and button["rect"].collidepoint(evento.pos):
+def check_click_button(event, button):
+    if event.type == pygame.MOUSEBUTTONDOWN and button["rect"].collidepoint(event.pos):
         return True
     return False
 
-def main_menu(screen, clock): 
-    font_title = pygame.font.Font("Jacquard24-Regular.ttf", 80)
+def main_menu(screen, clock, options): 
+    font_title = pygame.font.Font("Jacquard24-Regular.ttf", 130)
     font_button = pygame.font.Font("Jacquard24-Regular.ttf", 55)
 
     pygame.display.set_caption("Mad and madder")
@@ -43,7 +43,7 @@ def main_menu(screen, clock):
     base_text_hover = (255, 255, 255)
 
     play_button = create_button(
-    screen.get_width() / 2 - 50, 300, 100, 55, "Play",
+    screen.get_width() / 2 - 50, 310, 100, 55, "Play",
     font_button, base_text_color, base_text_hover
     )
     options_button = create_button(
@@ -76,7 +76,7 @@ def main_menu(screen, clock):
         screen.fill((10, 20, 30))
 
         tittle_text = font_title.render("Mad and madder", True, (255, 255, 255))
-        screen.blit(tittle_text, (screen.get_width() / 2 - tittle_text.get_width() / 2, 150))
+        screen.blit(tittle_text, (screen.get_width() / 2 - tittle_text.get_width() / 2, 100))
 
         for button in buttons:
             draw_button(screen, button)
@@ -86,24 +86,25 @@ def main_menu(screen, clock):
     
     return choice
 
-def pause_menu(screen, clock):
-    font_title = pygame.font.Font("Jacquard24-Regular.ttf", 80)
+def pause_menu(screen, clock, options):
+    font_title = pygame.font.Font("Jacquard24-Regular.ttf", 130)
     font_button = pygame.font.Font("Jacquard24-Regular.ttf", 55)
     
     base_text_color = (150, 150, 180)
     base_text_hover = (255, 255, 255)
 
-    overlay = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
-    overlay.fill((0, 0, 0, 0))
-
     resume_button = create_button(
         screen.get_width() / 2 - 70, 300, 140, 50, "Resume", font_button, base_text_color, base_text_hover
     )
+    options_button = create_button(
+        screen.get_width() / 2 - 75, 390, 150, 60, "Options",
+        font_button, base_text_color, base_text_hover
+    )
     main_menu_button = create_button(
-        screen.get_width() / 2 - 110, 400, 220, 45, "Main Menu", font_button, base_text_color, base_text_hover
+        screen.get_width() / 2 - 110, 500, 220, 45, "Main Menu", font_button, base_text_color, base_text_hover
     ) 
 
-    buttons = [resume_button, main_menu_button]
+    buttons = [resume_button, options_button, main_menu_button]
 
     choice = None
     while choice is None:
@@ -117,16 +118,18 @@ def pause_menu(screen, clock):
                 
             if check_click_button(event, resume_button):
                 return "play"
+            if check_click_button(event, options_button):
+                options_menu(screen, clock, options, "pause") 
             if check_click_button(event, main_menu_button):
                 return "main_menu"
         
         for button in buttons:
             update_hover_button(button)
             
-        screen.blit(overlay, (0, 0))
+        screen.fill((10, 20, 30))
 
         tittle_text = font_title.render("Paused", True, (255, 255, 255))
-        screen.blit(tittle_text, (screen.get_width() / 2 - tittle_text.get_width() / 2, 150))
+        screen.blit(tittle_text, (screen.get_width() / 2 - tittle_text.get_width() / 2, 100))
 
         for button in buttons:
             draw_button(screen, button)
@@ -134,4 +137,82 @@ def pause_menu(screen, clock):
         pygame.display.flip()
         clock.tick(30)
         
+    return choice
+
+def options_menu(screen, clock, options, return_to):
+    font_title = pygame.font.Font("Jacquard24-Regular.ttf", 130)
+    font_button = pygame.font.Font("Jacquard24-Regular.ttf", 55)
+    font_value = pygame.font.Font("Jacquard24-Regular.ttf", 50)
+
+    base_text_color = (150, 150, 180)
+    base_text_hover = (255, 255, 255)
+    pygame.display.set_caption("Mad and madder")
+
+    back_button = create_button(
+        screen.get_width() / 2 - 50, 500, 100, 55, "Back",
+        font_button, base_text_color, base_text_hover
+    )
+    buttons = [back_button]
+
+    slider_barra_rect = pygame.Rect(screen.get_width() / 2 - 150, 320, 300, 10)
+    x_button = slider_barra_rect.x + (slider_barra_rect.width * options["volume"])
+    slider_button_rect = pygame.Rect(x_button - 5, 310, 10, 30)
+
+    slider_arrastando = False
+    choice = None
+
+    while choice is None:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+            
+            if check_click_button(event, back_button):
+                return return_to
+            
+            if event.type == pygame.MOUSEBUTTONDOWN and slider_button_rect.collidepoint(event.pos):
+                slider_arrastando = True
+            if event.type == pygame.MOUSEBUTTONUP:
+                slider_arrastando = False
+
+            if event.type == pygame.MOUSEMOTION:
+                if slider_arrastando:
+                    mouse_x = event.pos[0]
+                    new_volume = (mouse_x - slider_barra_rect.x) / slider_barra_rect.width
+
+                    if new_volume < 0:
+                        new_volume = 0
+                    if new_volume > 1:
+                        new_volume = 1
+                    
+                    new_volume *= 100
+                    new_volume = round(new_volume)
+                    new_volume /= 100
+                    
+                    options["volume"] = new_volume
+                
+        for button in buttons:
+            update_hover_button(button)
+
+        slider_button_rect.centerx = slider_barra_rect.x + (slider_barra_rect.width * options["volume"])
+
+        screen.fill((10, 20, 30))
+
+        tittle_text = font_title.render("Options", True, (255, 255, 255))
+        screen.blit(tittle_text, (screen.get_width() / 2 - tittle_text.get_width() / 2, 100))
+
+        value_in_text = f"{int(options['volume'] * 100)}%"
+        texto_volume_surface = font_value.render(value_in_text, True, (255, 255, 255))
+        text_x = slider_barra_rect.right + 15
+        text_y = slider_barra_rect.centery
+        screen.blit(texto_volume_surface, (text_x, text_y - texto_volume_surface.get_height() / 2))
+        
+        pygame.draw.rect(screen, base_text_color, slider_barra_rect)
+        pygame.draw.rect(screen, (255, 255, 255), slider_button_rect)
+
+        for button in buttons:
+            draw_button(screen, button)
+
+        pygame.display.flip()
+        clock.tick(60)
+    
     return choice

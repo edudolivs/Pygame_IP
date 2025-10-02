@@ -1,7 +1,7 @@
 import pygame
 from scripts import entity, util, action, menu
 
-def game_loop(screen, clock, ASSETS):
+def game_loop(screen, clock, ASSETS, options):
     game = {
         'screen': screen,
         'clock': clock,
@@ -48,7 +48,7 @@ def game_loop(screen, clock, ASSETS):
                 
                 if event.key == pygame.K_ESCAPE:
                     player['mov'] = [0,0]
-                    choice = menu.pause_menu(screen, clock)
+                    choice = menu.pause_menu(screen, clock, options)
             
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_a:
@@ -67,7 +67,8 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     clock = pygame.time.Clock()
-
+    
+    options = {"volume": 0.5}
     ASSETS = {
         'imgs': {
             'environment':{
@@ -106,14 +107,13 @@ def main():
 
     choice = None
     while choice != 'quit':
-        choice = menu.main_menu(screen, clock)
+        choice = menu.main_menu(screen, clock, options)
 
         if choice == 'play':
-            choice = game_loop(screen, clock, ASSETS)
+            choice = game_loop(screen, clock, ASSETS, options)
         
         if choice == 'options':
-            pass
-
+            choice = menu.options_menu(screen, clock, options, "main_menu")
     pygame.quit()
 
 

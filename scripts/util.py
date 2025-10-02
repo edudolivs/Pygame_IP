@@ -40,4 +40,4 @@ def get_frame(entity) -> pygame.Surface:
     return animation['frames'][tick]
          
 def sound(actor, event):
-     pass
+    pass
