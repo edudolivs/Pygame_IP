@@ -9,8 +9,8 @@ def game_loop(screen, clock, ASSETS):
     }
     game.update(
         {
-            'player': entity.get_player(game, (100, 475), (128, 128)),
-            'boss': entity.get_boss(game, (600, 475-200), (300 , 300))
+            'player': entity.get_player(game, (100, 528)),
+            'boss': entity.get_boss(game, (600, 528+128-256))
         }
     )
     player = game['player']
@@ -75,6 +75,7 @@ def main():
                 'background': pygame.image.load('data/imgs/environment/background.png')
             },
             'player':{
+                'aura': util.load_img('data/imgs/player/aura.png'),
                 'walk': (util.list_frames('player', 'walk'), 5, None),
                 'idle': (util.list_frames('player', 'idle'), 5, None),
                 'jump': (util.list_frames('player', 'jump'), 5, None),
@@ -87,7 +88,7 @@ def main():
                 'idle': (util.list_frames('boss', 'idle'), 5, action.idle),
                 'sweep': (util.list_frames('boss', 'attk2'), 5, action.boss_sweep),
                 'slam': (util.list_frames('boss', 'attk'), 5, action.boss_slam),
-                'cool': (util.list_frames('boss', 'cool'), 20, action.idle),
+                'cool': (util.list_frames('boss', 'cool'), 10, action.idle),
             },
             "window": { 
                 "icon": pygame.image.load("data/imgs/window/icon.png")
@@ -99,7 +100,7 @@ def main():
             }
         }
     }
-
+    
     pygame.display.set_caption("Mad and madder")
     pygame.display.set_icon(ASSETS["imgs"]["window"]["icon"])
 
