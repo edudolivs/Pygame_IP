@@ -5,7 +5,8 @@ def game_loop(screen, clock, ASSETS, options):
     game = {
         'screen': screen,
         'clock': clock,
-        'assets': ASSETS
+        'assets': ASSETS,
+        "options": options
     }
     game.update(
         {
@@ -48,7 +49,7 @@ def game_loop(screen, clock, ASSETS, options):
                 
                 if event.key == pygame.K_ESCAPE:
                     player['mov'] = [0,0]
-                    choice = menu.pause_menu(screen, clock, options)
+                    choice = menu.pause_menu(screen, clock, options, ASSETS)
             
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_a:
@@ -95,9 +96,21 @@ def main():
                 "icon": pygame.image.load("data/imgs/window/icon.png")
             }
         },
-        'audio':{
+        'sounds':{
             'player': {
-                'jump': (util.sound('player', 'jump'), False)
+                'jump': pygame.mixer.Sound("data/sounds/player/jump.ogg"),
+                "attk": pygame.mixer.Sound("data/sounds/player/attk.ogg"),
+                "roll": pygame.mixer.Sound("data/sounds/player/roll.ogg"),
+            },
+            "boss": { 
+                "sweep": pygame.mixer.Sound("data/sounds/boss/sweep.ogg"),
+                "slam": pygame.mixer.Sound("data/sounds/boss/slam.ogg"),
+            },
+            "ui": {
+                "click": pygame.mixer.Sound("data/sounds/ui/click.ogg"),
+            },
+            "music": { 
+                "main_theme": "data/sounds/music/music.ogg"
             }
         }
     }
@@ -107,13 +120,13 @@ def main():
 
     choice = None
     while choice != 'quit':
-        choice = menu.main_menu(screen, clock, options)
+        choice = menu.main_menu(screen, clock, options, ASSETS)
 
         if choice == 'play':
             choice = game_loop(screen, clock, ASSETS, options)
         
         if choice == 'options':
-            choice = menu.options_menu(screen, clock, options, "main_menu")
+            choice = menu.options_menu(screen, clock, options, "main_menu", ASSETS)
     pygame.quit()
 
 

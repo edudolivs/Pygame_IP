@@ -1,17 +1,19 @@
 import pygame
 import random
-
+from scripts import util
 
 def idle(entity):
     entity['action'] = 'idle'
     entity['vel'] = [0, 0]
 
 def jump(entity):
+    util.sound(entity, "jump")
     entity['on_ground'] = False
     entity['action'] = 'jump'
     entity['vel'][1] = -50
 
 def attk(entity):
+    util.sound(entity, "attk")
     entity['on_ground'] = False
     entity['blessed'] = False
     entity['action'] = 'attk'
@@ -26,6 +28,7 @@ def player_hit(player):
     player['action'] = 'idle'
 
 def roll(entity):
+    util.sound(entity, "roll")
     entity['on_ground'] = False
     entity['action'] = 'roll'
 
@@ -38,6 +41,7 @@ def end_pray(entity):
     idle(entity)
 
 def boss_sweep(boss):
+    util.sound(boss, "sweep")
     hitbox = [500, 300]
     pos = (
         boss['pos'][0] + boss['size'][0] // 2 - hitbox[0] // 2 + boss['side'] * 150,
@@ -53,6 +57,7 @@ def boss_sweep(boss):
         idle(boss)
 
 def boss_slam(boss):
+    util.sound(boss, "slam")
     hitbox = [500, 300]
     pos = (
         boss['pos'][0] + boss['size'][0] // 2 - hitbox[0] // 2,

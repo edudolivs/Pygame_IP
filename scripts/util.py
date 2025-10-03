@@ -39,5 +39,10 @@ def get_frame(entity) -> pygame.Surface:
     animation['tick'] = (animation['tick'] + 1) % animation['len']
     return animation['frames'][tick]
          
-def sound(actor, event):
-    pass
+def sound(entity, event):
+    sfx = entity["game"]["assets"]["sounds"][entity["type"]][event]
+
+    volume = entity["game"]["options"]["volume"]
+
+    sfx.set_volume(volume)
+    sfx.play()
