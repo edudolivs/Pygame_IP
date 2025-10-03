@@ -25,7 +25,7 @@ def game_loop(screen, clock, ASSETS, options):
         entity.update_boss(boss)
         entity.update_player(player)
         
-        entity.render_entity(boss, screen)
+        entity.render_boss(boss, screen)
         entity.render_player(player, screen)
 
         for event in pygame.event.get():
@@ -38,13 +38,13 @@ def game_loop(screen, clock, ASSETS, options):
                 if event.key == pygame.K_d:
                     player['mov'][1] = True
                 if event.key == pygame.K_w and player['on_ground']:
-                    action.jump(player)
+                    action.player_jump(player)
                 if event.key == pygame.K_j and player['on_ground']:
-                    action.attk(player)
+                    action.player_atk1(player)
                 if event.key == pygame.K_k and player['on_ground']:
-                    action.roll(player)
+                    action.player_roll(player)
                 if event.key == pygame.K_l and player['on_ground']:
-                    action.pray(player)
+                    action.player_pray(player)
                 
                 if event.key == pygame.K_ESCAPE:
                     player['mov'] = [0,0]
@@ -78,18 +78,23 @@ def main():
             'player':{
                 'aura': util.load_img('data/imgs/player/aura.png'),
                 'walk': (util.list_frames('player', 'walk'), 5, None),
-                'idle': (util.list_frames('player', 'idle'), 5, None),
+                'idle': (util.list_frames('player', 'idle'), 10, None),
                 'jump': (util.list_frames('player', 'jump'), 5, None),
                 'roll': (util.list_frames('player', 'roll'), 3, action.idle),
-                'attk': (util.list_frames('player', 'attk'), 2, action.player_hit),
-                'pray': (util.list_frames('player', 'pray'), 3, action.end_pray)
+                'atk1': (util.list_frames('player', 'atk1'), 2, action.player_atk2),
+                'atk2': (util.list_frames('player', 'atk2'), 2, action.idle),
+                'pray': (util.list_frames('player', 'pray'), 5, action.player_end_pray)
             },
             'boss':{
-                'walk': (util.list_frames('boss', 'walk'), 10, action.idle),
+                'walk': (util.list_frames('boss', 'walk'), 5, action.idle),
+                'down': (util.list_frames('boss', 'down'), 5, action.boss_down),
                 'idle': (util.list_frames('boss', 'idle'), 5, action.idle),
-                'sweep': (util.list_frames('boss', 'attk2'), 5, action.boss_sweep),
-                'slam': (util.list_frames('boss', 'attk'), 5, action.boss_slam),
+                'up1':  (util.list_frames('boss', 'up1'), 10, action.boss_up2),
+                'up2':  (util.list_frames('boss', 'up2'), 10, action.boss_atk_count),
+                'spin1': (util.list_frames('boss', 'spin1'), 10, action.boss_spin2),
+                'spin2': (util.list_frames('boss', 'spin2'), 10, action.boss_atk_count),
                 'cool': (util.list_frames('boss', 'cool'), 10, action.idle),
+                'spikes': (util.list_frames('boss', 'spikes'), 2, None)
             },
             "window": { 
                 "icon": pygame.image.load("data/imgs/window/icon.png")

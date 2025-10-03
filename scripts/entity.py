@@ -13,7 +13,6 @@ def get_entity(game, type, pos):
         'vel': [0,0],
         'action': 'idle',
         'side': 1,
-        'on_ground': True,
         'base_speed': 1,
         'offset': (0, 0)
     }
@@ -28,7 +27,8 @@ def get_player(game, pos):
             'mov': [False, False],
             'blessed': False,
             'base_speed': 10,
-            'offset': (-144, -256)
+            'offset': (-144, -256),
+            'on_ground': True,
         }
     )
     return player
@@ -37,14 +37,40 @@ def get_boss(game, pos):
     boss = get_entity(game, 'boss', pos)
     boss.update(
         {
-            'type': 'boss',
-            'size': (128, 256),
+            'size': (96, 256),
             'base_speed': 5,
-            'offset': (-128, -128),
-            'attk_count': 5
+            'offset': (-144, -128),
+            'attk_count': 5,
+            'hp': 20,
+            'spikes': []
         }
     )
     return boss
+
+def get_spikes(game, pos):
+    spike0 = get_entity(game, 'boss', pos)
+    spike0.update(
+        {
+            'size': (192, 96),
+            'base_speed': 25,
+            'vel': [-1, 0],
+            'offset': (192/2 - 192, 96 - 384),
+            'action': 'spikes',
+            'side': -1
+        }
+    )
+    spike1 = get_entity(game, 'boss', pos)
+    spike1.update(
+        {
+            'size': (192, 96),
+            'base_speed': 25,
+            'vel': [1, 0],
+            'offset': (192/2 - 192, 96 - 384),
+            'action': 'spikes',
+            'side': 1
+        }
+    )
+    return [spike0, spike1]
 
 def get_rect(entity):
     return pygame.Rect(*entity['pos'], *entity['size'])
@@ -68,7 +94,7 @@ def update_player(player):
     if player['action'] == 'roll':
         player['vel'][0] = player['side'] * 2
         movement = 0
-    elif player['action'] == 'attk' or player['action'] == 'pray':
+    elif player['action'] in ['atk1', 'atk2', 'pray']:
         movement = 0
     else:
         player['vel'][0] = 0
@@ -95,6 +121,18 @@ def update_player(player):
         player['side'] *= -1
 
 def update_boss(boss):
+
+    update_entity(boss)
+
+    i = 0
+    while i < len(boss['spikes']):
+        spike = boss['spikes'][i]
+        update_entity(spike)
+        if abs(spike['pos'][0] - 640 + 96) > 640 + 96:
+            del boss['spikes'][i]
+            i -= 1
+        i += 1
+
     player = boss['game']['player']
 
     dist = player['pos'][0] - boss['pos'][0]
@@ -106,14 +144,15 @@ def update_boss(boss):
         if abs(dist) > 250:
             if boss['action'] == 'idle':
                 boss['vel'][0] = 0
-                boss['action'] = random.choice(['walk', 'sweep'])
+                boss['action'] = 'down' if random.random() < 0.25 else 'walk'
             if boss['action'] == 'walk':
                 boss['vel'][0] = dist/abs(dist)
         elif boss['action'] in {'idle', 'walk'}:
             boss['vel'] = [0, 0]
-            boss['action'] = random.choice(['sweep','slam'])
-
-    update_entity(boss)
+            if abs(dist) > 125:
+                boss['action'] = 'down' if random.random() < 0.25 else 'up1'
+            else:
+                boss['action'] = 'spin1' if random.random() < 0.5 else 'up1' if random.random() < 0.5 else 'down'
 
 def render_entity(entity, surface):
     pygame.draw.rect(surface, 'green', (*entity['pos'], *entity['size']))
@@ -125,16 +164,21 @@ def render_entity(entity, surface):
         )
     )
 
-
-def render_player(player, surface: pygame.Surface):
-    render_entity(player, surface)
+def render_player(player, surface):
     if player['blessed'] == True:
-        print('blessed')
         surface.blit(
             player['game']['assets']['imgs']['player']['aura'],
             (
-            player['pos'][0] + player['offset'][0],
-            player['pos'][1] + player['offset'][1]
+                player['pos'][0] + player['offset'][0],
+                player['pos'][1] + player['offset'][1]
             )
         )
+    render_entity(player, surface)
+
+def render_boss(boss, surface):
+    render_entity(boss, surface)
+    if boss['spikes']:
+        print(boss['spikes'][0]['pos'])
+    for spike in boss['spikes']:
+        render_entity(spike, surface)
 

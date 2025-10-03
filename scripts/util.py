@@ -30,7 +30,7 @@ def get_animation(entity):
             'effect': asset[2]
         }
 
-def get_frame(entity) -> pygame.Surface:
+def get_frame(entity):
     if entity['action'] != entity['animation']['action']:
         entity['animation'] = get_animation(entity)
     animation = entity['animation']
@@ -40,4 +40,4 @@ def get_frame(entity) -> pygame.Surface:
     return animation['frames'][tick]
          
 def sound(actor, event):
-    pass
+     pass
