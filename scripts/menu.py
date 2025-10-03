@@ -28,12 +28,15 @@ def update_hover_button(button):
         button["actual_text_color"] = button["base_text_color"]
     
 
-def check_click_button(event, button):
+def check_click_button(event, button, ASSETS, options):
     if event.type == pygame.MOUSEBUTTONDOWN and button["rect"].collidepoint(event.pos):
+        sfx = ASSETS["sounds"]["ui"]["click"]
+        sfx.set_volume(options["volume"])
+        sfx.play()
         return True
     return False
 
-def main_menu(screen, clock, options): 
+def main_menu(screen, clock, options, ASSETS): 
     font_title = pygame.font.Font("Jacquard24-Regular.ttf", 130)
     font_button = pygame.font.Font("Jacquard24-Regular.ttf", 55)
 
@@ -57,17 +60,21 @@ def main_menu(screen, clock, options):
 
     buttons = [play_button, options_button, quit_button]
 
+    pygame.mixer.music.load(ASSETS["sounds"]["music"]["main_theme"])
+    pygame.mixer.music.set_volume(options["volume"])
+    pygame.mixer.music.play(-1)
+
     choice = None
     while choice is None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
 
-            if check_click_button(event, play_button):
+            if check_click_button(event, play_button, ASSETS, options):
                 return "play"
-            if check_click_button(event, options_button):
+            if check_click_button(event, options_button, ASSETS, options):
                 return "options"
-            if check_click_button(event, quit_button):
+            if check_click_button(event, quit_button, ASSETS, options):
                 return "quit"
         
         for button in buttons:
@@ -86,7 +93,7 @@ def main_menu(screen, clock, options):
     
     return choice
 
-def pause_menu(screen, clock, options):
+def pause_menu(screen, clock, options, ASSETS):
     font_title = pygame.font.Font("Jacquard24-Regular.ttf", 130)
     font_button = pygame.font.Font("Jacquard24-Regular.ttf", 55)
     
@@ -116,11 +123,11 @@ def pause_menu(screen, clock, options):
                 if event.key == pygame.K_ESCAPE:
                     return "play"
                 
-            if check_click_button(event, resume_button):
+            if check_click_button(event, resume_button, ASSETS, options):
                 return "play"
-            if check_click_button(event, options_button):
-                options_menu(screen, clock, options, "pause") 
-            if check_click_button(event, main_menu_button):
+            if check_click_button(event, options_button, ASSETS, options):
+                options_menu(screen, clock, options, "pause", ASSETS) 
+            if check_click_button(event, main_menu_button, ASSETS, options):
                 return "main_menu"
         
         for button in buttons:
@@ -139,7 +146,7 @@ def pause_menu(screen, clock, options):
         
     return choice
 
-def options_menu(screen, clock, options, return_to):
+def options_menu(screen, clock, options, return_to, ASSETS):
     font_title = pygame.font.Font("Jacquard24-Regular.ttf", 130)
     font_button = pygame.font.Font("Jacquard24-Regular.ttf", 55)
     font_value = pygame.font.Font("Jacquard24-Regular.ttf", 50)
@@ -166,7 +173,7 @@ def options_menu(screen, clock, options, return_to):
             if event.type == pygame.QUIT:
                 return "quit"
             
-            if check_click_button(event, back_button):
+            if check_click_button(event, back_button, ASSETS, options):
                 return return_to
             
             if event.type == pygame.MOUSEBUTTONDOWN and slider_button_rect.collidepoint(event.pos):
@@ -189,7 +196,8 @@ def options_menu(screen, clock, options, return_to):
                     new_volume /= 100
                     
                     options["volume"] = new_volume
-                
+                    pygame.mixer.music.set_volume(options["volume"])
+
         for button in buttons:
             update_hover_button(button)
 
