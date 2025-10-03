@@ -94,6 +94,9 @@ def update_player(player):
         movement = 0
     elif player['action'] in {'atk1', 'atk2', 'pray'}:
         movement = 0
+    elif player['action'] == 'stunned':
+        movement = 0
+        player['vel'][1] += 5
     else:
         player['vel'][0] = 0
         player['vel'][1] += 5
@@ -134,8 +137,7 @@ def update_boss(boss):
 
         if rect(spike).colliderect(rect(player))\
         and not player['iframes']:
-            util.sound(player, 'morri')
-            player['iframes'] = 30
+            action.player_hurt(player)
 
         update_entity(spike)
         if abs(spike['pos'][0] - 640 + 96) > 640 + 96:

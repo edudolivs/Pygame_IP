@@ -76,7 +76,7 @@ def main():
     screen = pygame.display.set_mode((1280, 720))
     clock = pygame.time.Clock()
     
-    options = {"volume": 0.0}
+    options = {"volume": 0.5}
     ASSETS = {
         'imgs': {
             'environment':{
@@ -91,7 +91,8 @@ def main():
                 'roll': (util.list_frames('player', 'roll'), 3, action.idle),
                 'atk1': (util.list_frames('player', 'atk1'), 2, action.player_atk2),
                 'atk2': (util.list_frames('player', 'atk2'), 2, action.idle),
-                'pray': (util.list_frames('player', 'pray'), 5, action.player_end_pray)
+                'pray': (util.list_frames('player', 'pray'), 5, action.player_end_pray),
+                'stunned': (util.list_frames('player', 'stunned'), 5, None)
             },
             'boss':{
                 'walk': (util.list_frames('boss', 'walk'), 5, action.idle),
@@ -111,14 +112,15 @@ def main():
         },
         'sounds':{
             'player': {
-                'jump': pygame.mixer.Sound("data/sounds/player/jump.ogg"),
-                "attk": pygame.mixer.Sound("data/sounds/player/attk.ogg"),
-                "roll": pygame.mixer.Sound("data/sounds/player/roll.ogg"),
+                'jump': pygame.mixer.Sound("data/sounds/player/jump.mp3"),
+                "atk2": pygame.mixer.Sound("data/sounds/player/atk2.mp3"),
+                "roll": pygame.mixer.Sound("data/sounds/player/roll.mp3"),
                 'morri': pygame.mixer.Sound('data/sounds/player/morri.mp3')
             },
             "boss": { 
-                "sweep": pygame.mixer.Sound("data/sounds/boss/sweep.ogg"),
-                "slam": pygame.mixer.Sound("data/sounds/boss/slam.ogg"),
+                "up2": pygame.mixer.Sound("data/sounds/boss/up2.mp3"),
+                "spin2": pygame.mixer.Sound("data/sounds/boss/spin2.mp3"),
+                "down2": pygame.mixer.Sound("data/sounds/boss/down2.mp3"),
             },
             "ui": {
                 "click": pygame.mixer.Sound("data/sounds/ui/click.ogg"),
