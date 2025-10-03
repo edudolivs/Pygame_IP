@@ -1,6 +1,5 @@
 import pygame
-from scripts import action
-from scripts.util import get_frame, get_animation
+from scripts import action, util
 import random
 
 def get_entity(game, type, pos):
@@ -16,7 +15,7 @@ def get_entity(game, type, pos):
         'base_speed': 1,
         'offset': (0, 0)
     }
-    entity['animation'] = get_animation(entity)
+    entity['animation'] = util.get_animation(entity)
     return entity
 
 def get_player(game, pos):
@@ -29,6 +28,7 @@ def get_player(game, pos):
             'base_speed': 10,
             'offset': (-144, -256),
             'on_ground': True,
+            'iframes': 0
         }
     )
     return player
@@ -41,7 +41,7 @@ def get_boss(game, pos):
             'base_speed': 5,
             'offset': (-144, -128),
             'attk_count': 5,
-            'hp': 20,
+            'hp': 50,
             'spikes': []
         }
     )
@@ -51,10 +51,10 @@ def get_spikes(game, pos):
     spike0 = get_entity(game, 'boss', pos)
     spike0.update(
         {
-            'size': (192, 96),
+            'size': (192, 16),
             'base_speed': 25,
             'vel': [-1, 0],
-            'offset': (192/2 - 192, 96 - 384),
+            'offset': (192/2 - 192, 16 - 384),
             'action': 'spikes',
             'side': -1
         }
@@ -62,18 +62,15 @@ def get_spikes(game, pos):
     spike1 = get_entity(game, 'boss', pos)
     spike1.update(
         {
-            'size': (192, 96),
+            'size': (192, 16),
             'base_speed': 25,
             'vel': [1, 0],
-            'offset': (192/2 - 192, 96 - 384),
+            'offset': (192/2 - 192, 16 - 384),
             'action': 'spikes',
             'side': 1
         }
     )
     return [spike0, spike1]
-
-def get_rect(entity):
-    return pygame.Rect(*entity['pos'], *entity['size'])
 
 def update_entity(entity, movement = 0):
 
@@ -86,15 +83,16 @@ def update_entity(entity, movement = 0):
     entity['pos'][0] += frame_movement[0] * entity['base_speed']
     entity['pos'][1] += frame_movement[1]
 
-
 def update_player(player):
+
+    player['iframes'] = max(player['iframes'] - 1, 0)
 
     movement = player['mov'][1] - player['mov'][0]
 
     if player['action'] == 'roll':
         player['vel'][0] = player['side'] * 2
         movement = 0
-    elif player['action'] in ['atk1', 'atk2', 'pray']:
+    elif player['action'] in {'atk1', 'atk2', 'pray'}:
         movement = 0
     else:
         player['vel'][0] = 0
@@ -104,8 +102,12 @@ def update_player(player):
 
     if player['pos'][0] > 1208:
         player['pos'][0] = 1208
+        if player['action'] == 'walk':
+            player['action'] = 'idle'
     if player['pos'][0] < -24:
         player['pos'][0] = -24
+        if player['action'] == 'walk':
+            player['action'] = 'idle'
     if player['pos'][1] > 528:
         player['pos'][1] = 528
         player['vel'][1] = 0
@@ -122,18 +124,24 @@ def update_player(player):
 
 def update_boss(boss):
 
+    player = boss['game']['player']
+
     update_entity(boss)
 
     i = 0
     while i < len(boss['spikes']):
         spike = boss['spikes'][i]
+
+        if rect(spike).colliderect(rect(player))\
+        and not player['iframes']:
+            util.sound(player, 'morri')
+            player['iframes'] = 30
+
         update_entity(spike)
         if abs(spike['pos'][0] - 640 + 96) > 640 + 96:
             del boss['spikes'][i]
             i -= 1
         i += 1
-
-    player = boss['game']['player']
 
     dist = player['pos'][0] - boss['pos'][0]
 
@@ -144,20 +152,24 @@ def update_boss(boss):
         if abs(dist) > 250:
             if boss['action'] == 'idle':
                 boss['vel'][0] = 0
-                boss['action'] = 'down' if random.random() < 0.25 else 'walk'
+                boss['action'] = 'down1' if random.random() < 1/4 else 'walk'
             if boss['action'] == 'walk':
                 boss['vel'][0] = dist/abs(dist)
         elif boss['action'] in {'idle', 'walk'}:
             boss['vel'] = [0, 0]
             if abs(dist) > 125:
-                boss['action'] = 'down' if random.random() < 0.25 else 'up1'
+                boss['action'] = 'down1' if random.random() < 1/2 else 'up1'
             else:
-                boss['action'] = 'spin1' if random.random() < 0.5 else 'up1' if random.random() < 0.5 else 'down'
+                boss['action'] = 'spin1' if random.random() < 1/3 else 'up1' if random.random() < 1/2 else 'down1'
 
 def render_entity(entity, surface):
-    pygame.draw.rect(surface, 'green', (*entity['pos'], *entity['size']))
+    #pygame.draw.rect(surface, 'green', (*entity['pos'], *entity['size']))
     surface.blit(
-        pygame.transform.flip(get_frame(entity),bool(entity['side'] - 1), False),
+        pygame.transform.flip(
+            util.get_frame(entity),
+            bool(entity['side'] - 1),
+            False
+        ),
         (
             entity['pos'][0] + entity['offset'][0],
             entity['pos'][1] + entity['offset'][1]
@@ -176,9 +188,10 @@ def render_player(player, surface):
     render_entity(player, surface)
 
 def render_boss(boss, surface):
+
     render_entity(boss, surface)
-    if boss['spikes']:
-        print(boss['spikes'][0]['pos'])
     for spike in boss['spikes']:
         render_entity(spike, surface)
 
+def rect(entity):
+    return pygame.Rect(*entity['pos'], *entity['size'])

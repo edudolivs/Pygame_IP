@@ -17,21 +17,28 @@ def game_loop(screen, clock, ASSETS, options):
     player = game['player']
     boss = game['boss']
 
-    choice = 'play'
-    while choice == 'play':
+    game['choice'] = 'play'
+    while game['choice'] == 'play':
 
         screen.blit(ASSETS["imgs"]['environment']['background'], (0,0))
         screen.blit(ASSETS["imgs"]['environment']['floor'], (0, 0))
 
         entity.update_boss(boss)
         entity.update_player(player)
+
+        print(player['iframes'])
         
         entity.render_boss(boss, screen)
         entity.render_player(player, screen)
 
+        pygame.draw.rect(screen, 'red', (20, 20, 1240 * boss['hp'] // 50, 10))
+        font_name = pygame.font.Font("Jacquard24-Regular.ttf", 48)
+        name_text = font_name.render("The Mad King", True, (255, 255, 255))
+        screen.blit(name_text, (screen.get_width() / 2 - name_text.get_width() / 2, 0))
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                choice = 'quit'
+                game['choice'] = 'quit'
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
@@ -49,7 +56,7 @@ def game_loop(screen, clock, ASSETS, options):
                 
                 if event.key == pygame.K_ESCAPE:
                     player['mov'] = [0,0]
-                    choice = menu.pause_menu(screen, clock, options, ASSETS)
+                    game['choice'] = menu.pause_menu(screen, clock, options, ASSETS)
             
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_a:
@@ -62,14 +69,14 @@ def game_loop(screen, clock, ASSETS, options):
         pygame.display.flip()
         clock.tick(30)
         
-    return choice
+    return game['choice']
 
 def main():
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     clock = pygame.time.Clock()
     
-    options = {"volume": 0.5}
+    options = {"volume": 0.0}
     ASSETS = {
         'imgs': {
             'environment':{
@@ -88,14 +95,15 @@ def main():
             },
             'boss':{
                 'walk': (util.list_frames('boss', 'walk'), 5, action.idle),
-                'down': (util.list_frames('boss', 'down'), 5, action.boss_down),
+                'down1': (util.list_frames('boss', 'down1'), 10, action.boss_down2),
+                'down2': (util.list_frames('boss', 'down2'), 5, action.boss_atk_count),
                 'idle': (util.list_frames('boss', 'idle'), 5, action.idle),
                 'up1':  (util.list_frames('boss', 'up1'), 10, action.boss_up2),
                 'up2':  (util.list_frames('boss', 'up2'), 10, action.boss_atk_count),
                 'spin1': (util.list_frames('boss', 'spin1'), 10, action.boss_spin2),
                 'spin2': (util.list_frames('boss', 'spin2'), 10, action.boss_atk_count),
                 'cool': (util.list_frames('boss', 'cool'), 10, action.idle),
-                'spikes': (util.list_frames('boss', 'spikes'), 2, None)
+                'spikes': (util.list_frames('boss', 'spikes'), 4, None)
             },
             "window": { 
                 "icon": pygame.image.load("data/imgs/window/icon.png")
@@ -106,6 +114,7 @@ def main():
                 'jump': pygame.mixer.Sound("data/sounds/player/jump.ogg"),
                 "attk": pygame.mixer.Sound("data/sounds/player/attk.ogg"),
                 "roll": pygame.mixer.Sound("data/sounds/player/roll.ogg"),
+                'morri': pygame.mixer.Sound('data/sounds/player/morri.mp3')
             },
             "boss": { 
                 "sweep": pygame.mixer.Sound("data/sounds/boss/sweep.ogg"),
@@ -132,6 +141,10 @@ def main():
         
         if choice == 'options':
             choice = menu.options_menu(screen, clock, options, "main_menu", ASSETS)
+        
+        if choice == 'retry':
+            choice = 'play'
+
     pygame.quit()
 
 
