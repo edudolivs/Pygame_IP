@@ -1,7 +1,6 @@
 import pygame
 import random
 from scripts import util, entity
-from scripts import entity
 
 def idle(entity):
     entity['action'] = 'idle'
@@ -26,7 +25,13 @@ def player_atk2(player):
         player['pos'][0] + player['size'][0] // 2 - hitbox[0] // 2 + player['side'] * hitbox[0] // 2,
         player['pos'][1] + player['size'][1] - hitbox[1]
     )
-    pygame.draw.rect(player['game']['screen'], 'red', (*pos, *hitbox))
+    #pygame.draw.rect(player['game']['screen'], 'red', (*pos, *hitbox))
+
+    boss = player['game']['boss']
+    if pygame.Rect(*pos, *hitbox).colliderect(entity.rect(boss)):
+        boss['hp'] -= 1
+        if boss['hp'] == 0:
+            player['game']['choice'] = 'main_menu'
 
 def player_roll(entity):
     entity['on_ground'] = False
@@ -51,7 +56,7 @@ def boss_atk_count(boss):
 
 def boss_up2(boss):
     boss['action'] = 'up2'
-    hitbox0 = [320, 300]
+    hitbox0 = [300, 300]
     pos0 = (
         boss['pos'][0] + boss['size'][0] // 2 - hitbox0[0] // 2 + boss['side'] * hitbox0[0] // 2,
         boss['pos'][1] + boss['size'][1] - hitbox0[1]
@@ -61,8 +66,15 @@ def boss_up2(boss):
         boss['pos'][0] + boss['size'][0] // 2 - hitbox1[0] // 2 - boss['side'] * hitbox1[0] // 2,
         boss['pos'][1] + boss['size'][1] - hitbox1[1] - 150
     )
-    pygame.draw.rect(boss['game']['screen'], 'red', (*pos0, *hitbox0))
-    pygame.draw.rect(boss['game']['screen'], 'red', (*pos1, *hitbox1))
+    #pygame.draw.rect(boss['game']['screen'], 'red', (*pos0, *hitbox0))
+    #pygame.draw.rect(boss['game']['screen'], 'red', (*pos1, *hitbox1))
+
+    player = boss['game']['player']
+    if (pygame.Rect(*pos0, *hitbox0).colliderect(entity.rect(player))\
+    or pygame.Rect(*pos1, *hitbox1).colliderect(entity.rect(player)))\
+    and not player['iframes']:
+        util.sound(boss['game']['player'], 'morri')
+        player['iframes'] = 30
 
 def boss_spin2(boss):
     boss['action'] = 'spin2'
@@ -71,16 +83,36 @@ def boss_spin2(boss):
         boss['pos'][0] + boss['size'][0] // 2 - hitbox[0] // 2,
         boss['pos'][1] + boss['size'][1] - hitbox[1]
     )
-    pygame.draw.rect(boss['game']['screen'], 'red', (*pos, *hitbox))
+    #pygame.draw.rect(boss['game']['screen'], 'red', (*pos, *hitbox))
 
-def boss_down(boss):
+    player = boss['game']['player']
+    if pygame.Rect(*pos, *hitbox).colliderect(entity.rect(player))\
+    and not player['iframes']:
+        util.sound(boss['game']['player'], 'morri')
+        boss['game']['player']['iframes'] = 30
+
+def boss_down2(boss):
+    boss['action'] = 'down2'
+
+    hitbox = [48, 256]
+    pos = (
+        boss['pos'][0] + boss['size'][0] // 2 - hitbox[0] // 2 + boss['side'] * hitbox[0] // 2,
+        boss['pos'][1] + boss['size'][1] - hitbox[1]
+    )
+    #pygame.draw.rect(boss['game']['screen'], 'red', (*pos, *hitbox))
+
+    player = boss['game']['player']
+    if pygame.Rect(*pos, *hitbox).colliderect(entity.rect(player))\
+    and not player['iframes']:
+        util.sound(boss['game']['player'], 'morri')
+        player['iframes'] = 30
+
     boss['spikes'].extend(
         entity.get_spikes(
             boss['game'],
             (
-                boss['pos'][0] + boss['size'][0] // 2 - 96,
-                boss['pos'][1] + boss['size'][1] - 96
+                boss['pos'][0] + boss['size'][0] // 2 - 16,
+                boss['pos'][1] + boss['size'][1] - 16
             )
         )
     )
-    boss_atk_count(boss)
