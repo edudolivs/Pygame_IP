@@ -80,7 +80,7 @@ def main_menu(screen, clock, options, ASSETS):
         for button in buttons:
             update_hover_button(button)
         
-        screen.fill((10, 20, 30))
+        screen.fill('#0a141e')
 
         tittle_text = font_title.render("Mad and madder", True, (255, 255, 255))
         screen.blit(tittle_text, (screen.get_width() / 2 - tittle_text.get_width() / 2, 100))
@@ -92,6 +92,68 @@ def main_menu(screen, clock, options, ASSETS):
         clock.tick(30)
     
     return choice
+
+
+def death_menu(screen, clock, options, ASSETS):
+    font_title = pygame.font.Font("Jacquard24-Regular.ttf", 130)
+    font_button = pygame.font.Font("Jacquard24-Regular.ttf", 55)
+
+    pygame.display.set_caption("Mad and madder")
+
+    base_text_color = (150, 150, 180)
+    base_text_hover = (255, 255, 255)
+
+
+    menu_button = create_button(
+        screen.get_width() / 2 - 75, 400, 150, 60, "Retry",
+        font_button, base_text_color, base_text_hover
+    )
+
+    buttons = [menu_button]
+
+    pygame.mixer.music.load(ASSETS["sounds"]["music"]["main_theme"])
+    pygame.mixer.music.set_volume(options["volume"])
+    pygame.mixer.music.play(-1)
+
+    fundo = pygame.Surface((1280,720))
+    fundo.set_alpha(4)
+    fundo.fill('dark red')
+
+    for i in range(61):
+        
+        screen.blit(fundo, (0,0))
+        pygame.display.flip()
+        clock.tick(30)
+
+    choice = None
+    while choice is None:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+
+            if check_click_button(event, menu_button, ASSETS, options):
+                return "play"
+            
+        
+        for button in buttons:
+            update_hover_button(button)
+        
+            #screen.fill('#0a141e00')
+            
+
+        tittle_text = font_title.render("You lose", True, (139, 0, 0))
+        tittle_shadow = font_title.render("You lose", True, (0, 0, 0))
+        screen.blit(tittle_shadow, (screen.get_width() / 2 - tittle_shadow.get_width() / 2 + 5, 105))
+        screen.blit(tittle_text, (screen.get_width() / 2 - tittle_text.get_width() / 2, 100))
+
+        for button in buttons:
+            draw_button(screen, button)
+
+        pygame.display.flip()
+        clock.tick(30)
+    
+    return choice
+
 
 def pause_menu(screen, clock, options, ASSETS):
     font_title = pygame.font.Font("Jacquard24-Regular.ttf", 130)
@@ -114,6 +176,7 @@ def pause_menu(screen, clock, options, ASSETS):
     buttons = [resume_button, options_button, main_menu_button]
 
     choice = None
+
     while choice is None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -121,8 +184,7 @@ def pause_menu(screen, clock, options, ASSETS):
             
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    return "play"
-                
+                    return "play"        
             if check_click_button(event, resume_button, ASSETS, options):
                 return "play"
             if check_click_button(event, options_button, ASSETS, options):
@@ -132,7 +194,7 @@ def pause_menu(screen, clock, options, ASSETS):
         
         for button in buttons:
             update_hover_button(button)
-            
+
         screen.fill((10, 20, 30))
 
         tittle_text = font_title.render("Paused", True, (255, 255, 255))

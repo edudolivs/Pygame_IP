@@ -54,6 +54,10 @@ def player_hurt(player):
     player['vel'][1] = max(-20, player['vel'][1] - 20)
     util.sound(player, 'morri')
     player['iframes'] = 30
+    player['hp'] -= 1
+    if player['hp'] == 0:
+        player['game']['choice'] = 'death_menu'
+    print(f"vida do player = {player['hp']}")
 
 def boss_atk_count(boss):
     boss['attk_count'] = boss['attk_count'] - 1
@@ -105,19 +109,7 @@ def boss_spin2(boss):
 def boss_down2(boss):
     boss['action'] = 'down2'
 
-    hitbox = [48, 256]
-    pos = (
-        boss['pos'][0] + boss['size'][0] // 2 - hitbox[0] // 2 + boss['side'] * hitbox[0] // 2,
-        boss['pos'][1] + boss['size'][1] - hitbox[1]
-    )
-    #pygame.draw.rect(boss['game']['screen'], 'red', (*pos, *hitbox))
-
     util.sound(boss, 'down2')
-
-    player = boss['game']['player']
-    if pygame.Rect(*pos, *hitbox).colliderect(entity.rect(player))\
-    and not player['iframes']:
-        player_hurt(player)
 
     boss['spikes'].extend(
         entity.get_spikes(

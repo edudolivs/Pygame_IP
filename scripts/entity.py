@@ -28,7 +28,8 @@ def get_player(game, pos):
             'base_speed': 10,
             'offset': (-144, -256),
             'on_ground': True,
-            'iframes': 0
+            'iframes': 0,
+            'hp': 3
         }
     )
     return player
@@ -41,7 +42,7 @@ def get_boss(game, pos):
             'base_speed': 5,
             'offset': (-144, -128),
             'attk_count': 5,
-            'hp': 50,
+            'hp': 3,
             'spikes': []
         }
     )

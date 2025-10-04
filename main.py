@@ -134,9 +134,11 @@ def main():
     pygame.display.set_caption("Mad and madder")
     pygame.display.set_icon(ASSETS["imgs"]["window"]["icon"])
 
-    choice = None
+    choice = 'main_menu'
     while choice != 'quit':
-        choice = menu.main_menu(screen, clock, options, ASSETS)
+
+        if choice == 'main_menu':
+            choice = menu.main_menu(screen, clock, options, ASSETS)
 
         if choice == 'play':
             choice = game_loop(screen, clock, ASSETS, options)
@@ -146,6 +148,9 @@ def main():
         
         if choice == 'retry':
             choice = 'play'
+
+        if choice == 'death_menu':
+            choice = menu.death_menu(screen, clock, options, ASSETS)
 
     pygame.quit()
 
