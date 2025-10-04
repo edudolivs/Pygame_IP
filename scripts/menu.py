@@ -104,12 +104,16 @@ def death_menu(screen, clock, options, ASSETS):
     base_text_hover = (255, 255, 255)
 
 
-    menu_button = create_button(
-        screen.get_width() / 2 - 75, 400, 150, 60, "Retry",
+    retry_button = create_button(
+        screen.get_width() / 2 - 75, 300, 150, 60, "Retry",
         font_button, base_text_color, base_text_hover
     )
+    main_menu_button = create_button(
+    screen.get_width() / 2 - 75, 400, 150, 60, "Main menu",
+    font_button, base_text_color, base_text_hover
+    )
 
-    buttons = [menu_button]
+    buttons = [retry_button, main_menu_button]
 
     pygame.mixer.music.load(ASSETS["sounds"]["music"]["main_theme"])
     pygame.mixer.music.set_volume(options["volume"])
@@ -131,8 +135,10 @@ def death_menu(screen, clock, options, ASSETS):
             if event.type == pygame.QUIT:
                 return "quit"
 
-            if check_click_button(event, menu_button, ASSETS, options):
+            if check_click_button(event, retry_button, ASSETS, options):
                 return "play"
+            if check_click_button(event, main_menu_button, ASSETS, options):
+                return "main_menu"
             
         
         for button in buttons:
@@ -285,4 +291,43 @@ def options_menu(screen, clock, options, return_to, ASSETS):
         pygame.display.flip()
         clock.tick(60)
     
+    return choice
+
+def victory_menu(screen, clock, options, ASSETS):
+    font_title = pygame.font.Font("Jacquard24-Regular.ttf", 150)
+    font_button = pygame.font.Font("Jacquard24-Regular.ttf", 50)
+
+    base_text_color = (150, 150, 180)
+    base_text_hover = (255, 255, 255)
+    pygame.display.set_caption("Mad and madder")
+
+    main_menu_button = create_button(
+    screen.get_width() / 2 - 110, 500, 220, 45, "Main Menu", font_button, base_text_color, base_text_hover
+    ) 
+
+    buttons = [main_menu_button]
+
+    choice = None
+    while choice is None:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+            
+            if check_click_button(event, main_menu_button, ASSETS, options):
+                return "main_menu"
+            
+        for button in buttons:
+            update_hover_button(button)
+
+        screen.fill((10, 20, 30))
+
+        tittle_text = font_title.render("VICTORY", True, (255, 255, 255))
+        screen.blit(tittle_text, (screen.get_width() / 2 - tittle_text.get_width() / 2, 200))
+
+        for button in buttons:
+            draw_button(screen, button)
+    
+        pygame.display.flip()
+        clock.tick(30)
+
     return choice
