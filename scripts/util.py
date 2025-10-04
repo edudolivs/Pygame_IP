@@ -3,12 +3,12 @@ import os
 
 IMG_DIR = 'data/imgs'
 
-def load_img(path: str) -> pygame.Surface:
+def load_img(path):
     img = pygame.image.load(path)
     size = img.get_size()
     return pygame.transform.scale(img, (size[0]*3, size[1]*3))
 
-def list_frames(type: str, action: str) -> list[pygame.Surface]:
+def list_frames(type, action):
     imgs = []
     action_dir = os.path.join(IMG_DIR, type, action)
     file_names = sorted(os.listdir(action_dir))
@@ -30,15 +30,19 @@ def get_animation(entity):
             'effect': asset[2]
         }
 
-def get_frame(entity) -> pygame.Surface:
+def get_frame(entity):
     if entity['action'] != entity['animation']['action']:
         entity['animation'] = get_animation(entity)
     animation = entity['animation']
 
     tick = animation['tick'] // animation['duration']
     animation['tick'] = (animation['tick'] + 1) % animation['len']
-    print(animation['action'], tick) if entity['type'] == 'boss' else None
     return animation['frames'][tick]
          
-def sound(actor, event):
-     pass
+def sound(entity, event):
+    sfx = entity["game"]["assets"]["sounds"][entity["type"]][event]
+
+    volume = entity["game"]["options"]["volume"]
+
+    sfx.set_volume(volume)
+    sfx.play()
