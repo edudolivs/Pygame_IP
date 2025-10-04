@@ -145,12 +145,12 @@ def main():
         
         if choice == 'options':
             choice = menu.options_menu(screen, clock, options, "main_menu", ASSETS)
-        
-        if choice == 'retry':
-            choice = 'play'
-
+    
         if choice == 'death_menu':
             choice = menu.death_menu(screen, clock, options, ASSETS)
+        
+        if choice == "victory":
+            choice = menu.victory_menu(screen, clock, options, ASSETS)
 
     pygame.quit()
 

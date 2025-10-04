@@ -30,7 +30,7 @@ def player_atk2(player):
     if pygame.Rect(*pos, *hitbox).colliderect(entity.rect(boss)):
         boss['hp'] -= 1
         if boss['hp'] == 0:
-            player['game']['choice'] = 'main_menu'
+            player['game']['choice'] = "victory"
 
     util.sound(player, "atk2")
 
@@ -52,10 +52,10 @@ def player_hurt(player):
     player['action'] = 'stunned'
     player['vel'][0] = player['side'] * -1
     player['vel'][1] = max(-20, player['vel'][1] - 20)
-    util.sound(player, 'morri')
     player['iframes'] = 30
     player['hp'] -= 1
     if player['hp'] == 0:
+        util.sound(player, 'morri')
         player['game']['choice'] = 'death_menu'
     print(f"vida do player = {player['hp']}")
 
