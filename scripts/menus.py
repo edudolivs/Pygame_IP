@@ -293,12 +293,13 @@ def victory_menu(screen, clock, options, ASSETS, victory_type):
     font_title = pygame.font.Font("Jacquard24-Regular.ttf", 150)
     font_story = pygame.font.Font("Jacquard24-Regular.ttf", 48)
 
-    FADE_SPEED = 5
-    DISPLAY_DURATION = 5000 
+    FADE_SPEED = 50
+    DISPLAY_DURATION = 50000 
 
     ending_data = ASSETS['imgs']['endings'][victory_type]
     story_img = ending_data['img']
     story_text_content = ending_data['text']
+    story_text_content2 = ending_data['text2']
 
     theme_path = ending_data["theme"]
 
@@ -308,11 +309,14 @@ def victory_menu(screen, clock, options, ASSETS, victory_type):
 
     img_rect = story_img.get_rect(topleft=(0, 0))
     story_text = font_story.render(story_text_content, True, (255, 255, 255))
-    story_rect = story_text.get_rect(center=(screen.get_width() / 2, screen.get_height() - 100))
+    story_text2 = font_story.render(story_text_content2, True, (255, 255, 255))
+    story_rect = story_text.get_rect(center=(screen.get_width() / 2, screen.get_height() - 35))
+    story_rect2 = story_text2.get_rect(center=(screen.get_width() / 2, screen.get_height() - 80))
     
     def draw_scene(alpha_value):
         screen.blit(story_img, img_rect)
         screen.blit(story_text, story_rect) 
+        screen.blit(story_text2, story_rect2) 
 
         fade_surface = pygame.Surface(screen.get_size())
         fade_surface.fill((0, 0, 0))
