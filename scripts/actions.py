@@ -1,6 +1,6 @@
 import pygame
 import random
-from scripts import util, entity
+from scripts import utils, entities
 
 def idle(entity):
     entity['action'] = 'idle'
@@ -10,7 +10,7 @@ def player_jump(player):
     player['on_ground'] = False
     player['action'] = 'jump'
     player['vel'][1] = -50
-    util.sound(player, "jump")
+    utils.sound(player, "jump")
 
 def player_atk1(player):
     player['on_ground'] = False
@@ -18,7 +18,6 @@ def player_atk1(player):
 
 def player_atk2(player):
     player['action'] = 'atk2'
-    player['blessed'] = False
     hitbox = [128, 160]
     pos = (
         player['pos'][0] + player['size'][0] // 2 - hitbox[0] // 2 + player['side'] * hitbox[0] // 2,
@@ -27,17 +26,27 @@ def player_atk2(player):
     #pygame.draw.rect(player['game']['screen'], 'red', (*pos, *hitbox))
 
     boss = player['game']['boss']
-    if pygame.Rect(*pos, *hitbox).colliderect(entity.rect(boss)):
-        boss['hp'] -= 1
-        if boss['hp'] == 0:
-            player['game']['choice'] = "victory"
+    if pygame.Rect(*pos, *hitbox).colliderect(entities.rect(boss)):
+        
+        if player['blessed']:
+            boss['hp'] -= 5
+        else:
+            player['pure'] = False
+            boss['hp'] -= 1
 
-    util.sound(player, "atk2")
+        if boss['hp'] <= 0:
+            if player['pure']:
+                player['game']['choice'] = 'victory' # TODO 'blessed_victory'
+            else:
+                player['game']['choice'] = "victory"
+
+    player['blessed'] = False
+    utils.sound(player, "atk2")
 
 def player_roll(player):
     player['on_ground'] = False
     player['action'] = 'roll'
-    util.sound(player, "roll")
+    utils.sound(player, "roll")
 
 def player_pray(player):
     player['on_ground'] = False
@@ -50,14 +59,13 @@ def player_end_pray(player):
 def player_hurt(player):
     player['on_ground'] = False
     player['action'] = 'stunned'
-    player['vel'][0] = player['side'] * -1
-    player['vel'][1] = max(-20, player['vel'][1] - 20)
+    player['vel'] = [player['side'] * -1, -20]
     player['iframes'] = 30
+    player['show_hearts'] = 31
     player['hp'] -= 1
     if player['hp'] == 0:
-        util.sound(player, 'morri')
+        utils.sound(player, 'morri')
         player['game']['choice'] = 'death_menu'
-    print(f"vida do player = {player['hp']}")
 
 def boss_atk_count(boss):
     boss['attk_count'] = boss['attk_count'] - 1
@@ -69,7 +77,8 @@ def boss_atk_count(boss):
 
 def boss_up2(boss):
     boss['action'] = 'up2'
-    hitbox0 = [300, 300]
+    boss['slash'] = entities.get_slash(boss['game'], boss['pos'])
+    hitbox0 = [275, 300]
     pos0 = (
         boss['pos'][0] + boss['size'][0] // 2 - hitbox0[0] // 2 + boss['side'] * hitbox0[0] // 2,
         boss['pos'][1] + boss['size'][1] - hitbox0[1]
@@ -83,12 +92,16 @@ def boss_up2(boss):
     #pygame.draw.rect(boss['game']['screen'], 'red', (*pos1, *hitbox1))
 
     player = boss['game']['player']
-    if (pygame.Rect(*pos0, *hitbox0).colliderect(entity.rect(player))\
-    or pygame.Rect(*pos1, *hitbox1).colliderect(entity.rect(player)))\
+    if (pygame.Rect(*pos0, *hitbox0).colliderect(entities.rect(player))\
+    or pygame.Rect(*pos1, *hitbox1).colliderect(entities.rect(player)))\
     and not player['iframes']:
         player_hurt(player)
     
-    util.sound(boss, 'up2')
+    utils.sound(boss, 'up2')
+
+def boss_end_slash(boss):
+    del boss['slash']
+    boss_atk_count(boss)
 
 def boss_spin2(boss):
     boss['action'] = 'spin2'
@@ -100,19 +113,19 @@ def boss_spin2(boss):
     #pygame.draw.rect(boss['game']['screen'], 'red', (*pos, *hitbox))
 
     player = boss['game']['player']
-    if pygame.Rect(*pos, *hitbox).colliderect(entity.rect(player))\
+    if pygame.Rect(*pos, *hitbox).colliderect(entities.rect(player))\
     and not player['iframes']:
         player_hurt(player)
     
-    util.sound(boss, 'spin2')
+    utils.sound(boss, 'spin2')
 
 def boss_down2(boss):
     boss['action'] = 'down2'
 
-    util.sound(boss, 'down2')
+    utils.sound(boss, 'down2')
 
     boss['spikes'].extend(
-        entity.get_spikes(
+        entities.get_spikes(
             boss['game'],
             (
                 boss['pos'][0] + boss['size'][0] // 2 - 16,

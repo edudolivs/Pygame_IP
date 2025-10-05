@@ -1,5 +1,5 @@
 import pygame
-from scripts import action, util
+from scripts import actions, utils
 import random
 
 def get_entity(game, type, pos):
@@ -15,7 +15,7 @@ def get_entity(game, type, pos):
         'base_speed': 1,
         'offset': (0, 0)
     }
-    entity['animation'] = util.get_animation(entity)
+    entity['animation'] = utils.get_animation(entity)
     return entity
 
 def get_player(game, pos):
@@ -25,10 +25,12 @@ def get_player(game, pos):
             'size': (96, 128),
             'mov': [False, False],
             'blessed': False,
+            'pure': True,
             'base_speed': 10,
             'offset': (-144, -256),
             'on_ground': True,
-            'iframes': 0,
+            'iframes': 30,
+            'show_hearts': 30,
             'hp': 3
         }
     )
@@ -41,8 +43,8 @@ def get_boss(game, pos):
             'size': (96, 256),
             'base_speed': 5,
             'offset': (-144, -128),
-            'attk_count': 5,
-            'hp': 3,
+            'attk_count': -1,
+            'hp': 50,
             'spikes': []
         }
     )
@@ -73,6 +75,20 @@ def get_spikes(game, pos):
     )
     return [spike0, spike1]
 
+def get_slash(game, pos):
+    slash = get_entity(game, 'boss', pos)
+    slash.update(
+        {
+            'action': 'slash',
+            'side': game['boss']['side'],
+            'offset': (
+                200 * game['boss']['side'] - 144,
+                -128
+            )
+        }
+    )
+    return slash
+
 def update_entity(entity, movement = 0):
 
     frame_movement = (entity['vel'][0] + movement, entity['vel'][1])
@@ -87,6 +103,7 @@ def update_entity(entity, movement = 0):
 def update_player(player):
 
     player['iframes'] = max(player['iframes'] - 1, 0)
+    player['show_hearts'] = max(player['show_hearts'] - 1, 0)
 
     movement = player['mov'][1] - player['mov'][0]
 
@@ -138,7 +155,7 @@ def update_boss(boss):
 
         if rect(spike).colliderect(rect(player))\
         and not player['iframes']:
-            action.player_hurt(player)
+            actions.player_hurt(player)
 
         update_entity(spike)
         if abs(spike['pos'][0] - 640 + 96) > 640 + 96:
@@ -152,7 +169,7 @@ def update_boss(boss):
         boss['side'] = dist/abs(dist)
     
     if boss['action'] != 'cool':
-        if abs(dist) > 250:
+        if abs(dist) > 200:
             if boss['action'] == 'idle':
                 boss['vel'][0] = 0
                 boss['action'] = 'down1' if random.random() < 1/4 else 'walk'
@@ -160,16 +177,16 @@ def update_boss(boss):
                 boss['vel'][0] = dist/abs(dist)
         elif boss['action'] in {'idle', 'walk'}:
             boss['vel'] = [0, 0]
-            if abs(dist) > 125:
-                boss['action'] = 'down1' if random.random() < 1/2 else 'up1'
+            if abs(dist) > 150:
+                boss['action'] = 'down1' if random.random() < 1/4 else 'up1'
             else:
-                boss['action'] = 'spin1' if random.random() < 1/3 else 'up1' if random.random() < 1/2 else 'down1'
+                boss['action'] = 'spin1' if random.random() < 1/2 else 'up1' if random.random() < 1/2 else 'down1'
 
 def render_entity(entity, surface):
     #pygame.draw.rect(surface, 'green', (*entity['pos'], *entity['size']))
     surface.blit(
         pygame.transform.flip(
-            util.get_frame(entity),
+            utils.get_frame(entity),
             bool(entity['side'] - 1),
             False
         ),
@@ -179,7 +196,7 @@ def render_entity(entity, surface):
         )
     )
 
-def render_player(player, surface):
+def render_player(player, surface: pygame.Surface):
     if player['blessed'] == True:
         surface.blit(
             player['game']['assets']['imgs']['player']['aura'],
@@ -190,9 +207,13 @@ def render_player(player, surface):
         )
     render_entity(player, surface)
 
-def render_boss(boss, surface):
+def render_boss(boss, surface: pygame.Surface):
 
     render_entity(boss, surface)
+
+    if 'slash' in boss:
+        render_entity(boss['slash'], surface)
+
     for spike in boss['spikes']:
         render_entity(spike, surface)
 

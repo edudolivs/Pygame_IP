@@ -1,5 +1,5 @@
 import pygame
-from scripts import entity, util, action, menu
+from scripts import entities, utils, actions, menus
 
 def game_loop(screen, clock, ASSETS, options):
     game = {
@@ -10,8 +10,8 @@ def game_loop(screen, clock, ASSETS, options):
     }
     game.update(
         {
-            'player': entity.get_player(game, (100, 528)),
-            'boss': entity.get_boss(game, (600, 528+128-256))
+            'player': entities.get_player(game, (100, 528)),
+            'boss': entities.get_boss(game, (600, 528+128-256))
         }
     )
     player = game['player']
@@ -23,18 +23,31 @@ def game_loop(screen, clock, ASSETS, options):
         screen.blit(ASSETS["imgs"]['environment']['background'], (0,0))
         screen.blit(ASSETS["imgs"]['environment']['floor'], (0, 0))
 
-        entity.update_boss(boss)
-        entity.update_player(player)
-
-        print(player['iframes'])
+        entities.update_boss(boss)
+        entities.update_player(player)
         
-        entity.render_boss(boss, screen)
-        entity.render_player(player, screen)
+        entities.render_boss(boss, screen)
+        entities.render_player(player, screen)
 
         pygame.draw.rect(screen, 'red', (20, 20, 1240 * boss['hp'] // 50, 10))
         font_name = pygame.font.Font("Jacquard24-Regular.ttf", 48)
         name_text = font_name.render("The Mad King", True, (255, 255, 255))
         screen.blit(name_text, (screen.get_width() / 2 - name_text.get_width() / 2, 0))
+
+        if player['show_hearts'] % 10 < 5:
+            for i in range(3):
+                if i < player['hp']:
+                    heart = player['game']['assets']['imgs']['player']['heart1']
+                else:
+                    heart: pygame.Surface = player['game']['assets']['imgs']['player']['heart0']
+                size = heart.get_size()
+                screen.blit(
+                    heart,
+                    (
+                        i * size[0],
+                        720 - size[1]
+                    )
+                )
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -46,17 +59,17 @@ def game_loop(screen, clock, ASSETS, options):
                 if event.key == pygame.K_d:
                     player['mov'][1] = True
                 if event.key == pygame.K_w and player['on_ground']:
-                    action.player_jump(player)
+                    actions.player_jump(player)
                 if event.key == pygame.K_j and player['on_ground']:
-                    action.player_atk1(player)
+                    actions.player_atk1(player)
                 if event.key == pygame.K_k and player['on_ground']:
-                    action.player_roll(player)
+                    actions.player_roll(player)
                 if event.key == pygame.K_l and player['on_ground']:
-                    action.player_pray(player)
+                    actions.player_pray(player)
                 
                 if event.key == pygame.K_ESCAPE:
                     player['mov'] = [0,0]
-                    game['choice'] = menu.pause_menu(screen, clock, options, ASSETS)
+                    game['choice'] = menus.pause_menu(screen, clock, options, ASSETS)
             
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_a:
@@ -84,27 +97,30 @@ def main():
                 'background': pygame.image.load('data/imgs/environment/background.png')
             },
             'player':{
-                'aura': util.load_img('data/imgs/player/aura.png'),
-                'walk': (util.list_frames('player', 'walk'), 5, None),
-                'idle': (util.list_frames('player', 'idle'), 10, None),
-                'jump': (util.list_frames('player', 'jump'), 5, None),
-                'roll': (util.list_frames('player', 'roll'), 3, action.idle),
-                'atk1': (util.list_frames('player', 'atk1'), 2, action.player_atk2),
-                'atk2': (util.list_frames('player', 'atk2'), 2, action.idle),
-                'pray': (util.list_frames('player', 'pray'), 5, action.player_end_pray),
-                'stunned': (util.list_frames('player', 'stunned'), 5, None)
+                'aura': utils.load_img('data/imgs/player/aura.png'),
+                'heart0': pygame.transform.scale2x(pygame.image.load('data/imgs/player/heart0.png')),
+                'heart1': pygame.transform.scale2x(pygame.image.load('data/imgs/player/heart1.png')),
+                'walk': (utils.list_frames('player', 'walk'), 5, None),
+                'idle': (utils.list_frames('player', 'idle'), 10, None),
+                'jump': (utils.list_frames('player', 'jump'), 5, None),
+                'roll': (utils.list_frames('player', 'roll'), 3, actions.idle),
+                'atk1': (utils.list_frames('player', 'atk1'), 2, actions.player_atk2),
+                'atk2': (utils.list_frames('player', 'atk2'), 2, actions.idle),
+                'pray': (utils.list_frames('player', 'pray'), 5, actions.player_end_pray),
+                'stunned': (utils.list_frames('player', 'stunned'), 5, None)
             },
             'boss':{
-                'walk': (util.list_frames('boss', 'walk'), 5, action.idle),
-                'down1': (util.list_frames('boss', 'down1'), 10, action.boss_down2),
-                'down2': (util.list_frames('boss', 'down2'), 5, action.boss_atk_count),
-                'idle': (util.list_frames('boss', 'idle'), 5, action.idle),
-                'up1':  (util.list_frames('boss', 'up1'), 10, action.boss_up2),
-                'up2':  (util.list_frames('boss', 'up2'), 10, action.boss_atk_count),
-                'spin1': (util.list_frames('boss', 'spin1'), 10, action.boss_spin2),
-                'spin2': (util.list_frames('boss', 'spin2'), 10, action.boss_atk_count),
-                'cool': (util.list_frames('boss', 'cool'), 10, action.idle),
-                'spikes': (util.list_frames('boss', 'spikes'), 4, None)
+                'walk': (utils.list_frames('boss', 'walk'), 5, actions.idle),
+                'down1': (utils.list_frames('boss', 'down1'), 10, actions.boss_down2),
+                'down2': (utils.list_frames('boss', 'down2'), 5, actions.boss_atk_count),
+                'idle': (utils.list_frames('boss', 'idle'), 5, actions.idle),
+                'up1':  (utils.list_frames('boss', 'up1'), 10, actions.boss_up2),
+                'up2':  (utils.list_frames('boss', 'up2'), 10, actions.boss_end_slash),
+                'slash': (utils.list_frames('boss', 'slash'), 10, None),
+                'spin1': (utils.list_frames('boss', 'spin1'), 10, actions.boss_spin2),
+                'spin2': (utils.list_frames('boss', 'spin2'), 10, actions.boss_atk_count),
+                'cool': (utils.list_frames('boss', 'cool'), 10, actions.idle),
+                'spikes': (utils.list_frames('boss', 'spikes'), 4, None)
             },
             "window": { 
                 "icon": pygame.image.load("data/imgs/window/icon.png")
@@ -130,27 +146,24 @@ def main():
             }
         }
     }
-    
-    pygame.display.set_caption("Mad and madder")
-    pygame.display.set_icon(ASSETS["imgs"]["window"]["icon"])
 
     choice = 'main_menu'
     while choice != 'quit':
 
         if choice == 'main_menu':
-            choice = menu.main_menu(screen, clock, options, ASSETS)
+            choice = menus.main_menu(screen, clock, options, ASSETS)
 
         if choice == 'play':
             choice = game_loop(screen, clock, ASSETS, options)
         
         if choice == 'options':
-            choice = menu.options_menu(screen, clock, options, "main_menu", ASSETS)
+            choice = menus.options_menu(screen, clock, options, "main_menu", ASSETS)
     
         if choice == 'death_menu':
-            choice = menu.death_menu(screen, clock, options, ASSETS)
+            choice = menus.death_menu(screen, clock, options, ASSETS)
         
         if choice == "victory":
-            choice = menu.victory_menu(screen, clock, options, ASSETS)
+            choice = menus.victory_menu(screen, clock, options, ASSETS)
 
     pygame.quit()
 
