@@ -89,12 +89,26 @@ def main():
     screen = pygame.display.set_mode((1280, 720))
     clock = pygame.time.Clock()
     
-    options = {"volume": 0.5}
+    options = {"volume": 0.3}
     ASSETS = {
         'imgs': {
             'environment':{
                 'floor': pygame.image.load('data/imgs/environment/floor.png'),
                 'background': pygame.image.load('data/imgs/environment/background.png')
+            },
+            "endings": {
+                "blessed_victory": {
+                    'img': pygame.image.load("data/imgs/endings/blessed_ending.jpeg"),
+                    'text': "Sua alma se manteve pura. O reino está a salvo."
+                },
+                    'corrupt_victory': {
+                    'img': pygame.image.load("data/imgs/endings/corrupt_ending.jpeg"),
+                    'text': "O poder do rei louco agora é seu. A que custo?"
+                },
+                    "common_victory": {
+                    'img': pygame.image.load("data/imgs/endings/common_ending.png"),
+                    'text': "O tirano foi derrotado. O reino respira aliviado."
+                } 
             },
             'player':{
                 'aura': utils.load_img('data/imgs/player/aura.png'),
@@ -162,8 +176,9 @@ def main():
         if choice == 'death_menu':
             choice = menus.death_menu(screen, clock, options, ASSETS)
         
-        if choice == "victory":
-            choice = menus.victory_menu(screen, clock, options, ASSETS)
+        if "victory" in choice:
+            victory_type = choice
+            choice = menus.victory_menu(screen, clock, options, ASSETS, victory_type)
 
     pygame.quit()
 

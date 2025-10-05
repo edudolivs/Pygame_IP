@@ -36,11 +36,11 @@ def player_atk2(player):
 
         if boss['hp'] <= 0:
             if player['pure']:
-                player['game']['choice'] = 'victory' # TODO 'blessed_victory'
+                player['game']['choice'] = "blessed_victory" 
             elif player['corrupt']:
-                player['game']['choice'] = 'victory' # TODO 'corrupt_victory'
+                player['game']['choice'] = "corrupt_victory" 
             else:
-                player['game']['choice'] = "victory"
+                player['game']['choice'] = "common_victory"
 
     player['blessed'] = False
     utils.sound(player, "atk2")

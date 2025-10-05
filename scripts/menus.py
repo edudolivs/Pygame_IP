@@ -27,7 +27,6 @@ def update_hover_button(button):
     else:
         button["actual_text_color"] = button["base_text_color"]
     
-
 def check_click_button(event, button, ASSETS, options):
     if event.type == pygame.MOUSEBUTTONDOWN and button["rect"].collidepoint(event.pos):
         sfx = ASSETS["sounds"]["ui"]["click"]
@@ -93,7 +92,6 @@ def main_menu(screen, clock, options, ASSETS):
     
     return choice
 
-
 def death_menu(screen, clock, options, ASSETS):
     font_title = pygame.font.Font("Jacquard24-Regular.ttf", 130)
     font_button = pygame.font.Font("Jacquard24-Regular.ttf", 55)
@@ -102,7 +100,6 @@ def death_menu(screen, clock, options, ASSETS):
 
     base_text_color = (150, 150, 180)
     base_text_hover = (255, 255, 255)
-
 
     retry_button = create_button(
         screen.get_width() / 2 - 75, 300, 150, 60, "Retry",
@@ -140,13 +137,11 @@ def death_menu(screen, clock, options, ASSETS):
             if check_click_button(event, main_menu_button, ASSETS, options):
                 return "main_menu"
             
-        
         for button in buttons:
             update_hover_button(button)
         
             #screen.fill('#0a141e00')
             
-
         tittle_text = font_title.render("You lose", True, (139, 0, 0))
         tittle_shadow = font_title.render("You lose", True, (0, 0, 0))
         screen.blit(tittle_shadow, (screen.get_width() / 2 - tittle_shadow.get_width() / 2 + 5, 105))
@@ -159,7 +154,6 @@ def death_menu(screen, clock, options, ASSETS):
         clock.tick(30)
     
     return choice
-
 
 def pause_menu(screen, clock, options, ASSETS):
     font_title = pygame.font.Font("Jacquard24-Regular.ttf", 130)
@@ -293,41 +287,63 @@ def options_menu(screen, clock, options, return_to, ASSETS):
     
     return choice
 
-def victory_menu(screen, clock, options, ASSETS):
+import pygame
+
+def victory_menu(screen, clock, options, ASSETS, victory_type):
     font_title = pygame.font.Font("Jacquard24-Regular.ttf", 150)
-    font_button = pygame.font.Font("Jacquard24-Regular.ttf", 50)
+    font_story = pygame.font.Font("Jacquard24-Regular.ttf", 48)
 
-    base_text_color = (150, 150, 180)
-    base_text_hover = (255, 255, 255)
-    pygame.display.set_caption("Mad and madder")
+    FADE_SPEED = 5
+    DISPLAY_DURATION = 5000 
 
-    main_menu_button = create_button(
-    screen.get_width() / 2 - 110, 500, 220, 45, "Main Menu", font_button, base_text_color, base_text_hover
-    ) 
+    ending_data = ASSETS['imgs']['endings'][victory_type]
+    story_img = ending_data['img']
+    story_text_content = ending_data['text']
 
-    buttons = [main_menu_button]
-
-    choice = None
-    while choice is None:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return "quit"
-            
-            if check_click_button(event, main_menu_button, ASSETS, options):
-                return "main_menu"
-            
-        for button in buttons:
-            update_hover_button(button)
-
-        screen.fill((10, 20, 30))
-
-        tittle_text = font_title.render("VICTORY", True, (255, 255, 255))
-        screen.blit(tittle_text, (screen.get_width() / 2 - tittle_text.get_width() / 2, 200))
-
-        for button in buttons:
-            draw_button(screen, button)
+    img_rect = story_img.get_rect(topleft=(0, 0))
     
-        pygame.display.flip()
-        clock.tick(30)
+    title_text = font_title.render("VICTORY", True, (255, 255, 255))
+    title_rect = title_text.get_rect(center=(screen.get_width() / 2, 150))
 
-    return choice
+    story_text = font_story.render(story_text_content, True, (255, 255, 255))
+    story_rect = story_text.get_rect(center=(screen.get_width() / 2, screen.get_height() - 100))
+    
+    def draw_scene(alpha_value):
+        screen.blit(story_img, img_rect)
+        screen.blit(title_text, title_rect)
+        screen.blit(story_text, story_rect) 
+
+        fade_surface = pygame.Surface(screen.get_size())
+        fade_surface.fill((0, 0, 0))
+        fade_surface.set_alpha(255 - alpha_value)
+        screen.blit(fade_surface, (0, 0))
+
+        pygame.display.flip()
+        clock.tick(60)
+
+    for alpha in range(0, 256, FADE_SPEED):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: return "quit"
+            if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                draw_scene(255)
+                pygame.time.wait(1500) 
+                return "main_menu"
+        draw_scene(alpha)
+    draw_scene(255)
+
+    start_time = pygame.time.get_ticks()
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: return "quit"
+            if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN: waiting = False
+        if pygame.time.get_ticks() - start_time > DISPLAY_DURATION: waiting = False
+        clock.tick(60)
+
+    for alpha in range(255, -1, -FADE_SPEED):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: return "quit"
+        draw_scene(alpha)
+    draw_scene(0)
+
+    return "main_menu"
