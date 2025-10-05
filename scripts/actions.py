@@ -29,7 +29,7 @@ def player_atk2(player):
         
         if player['blessed']:
             utils.sound(player, "blessed_hit")
-            boss['hp'] -= 2
+            boss['hp'] -= 40
         else:
             utils.sound(player, "hit")
             player['pure'] = False

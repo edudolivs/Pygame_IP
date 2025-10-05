@@ -312,7 +312,6 @@ def victory_menu(screen, clock, options, ASSETS, victory_type):
     
     def draw_scene(alpha_value):
         screen.blit(story_img, img_rect)
-        screen.blit(title_text, title_rect)
         screen.blit(story_text, story_rect) 
 
         fade_surface = pygame.Surface(screen.get_size())
