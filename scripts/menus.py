@@ -308,8 +308,8 @@ def victory_menu(screen, clock, options, ASSETS, victory_type):
     pygame.mixer.music.play(-1)
 
     img_rect = story_img.get_rect(topleft=(0, 0))
-    story_text = font_story.render(story_text_content, True, (255, 255, 255))
-    story_text2 = font_story.render(story_text_content2, True, (255, 255, 255))
+    story_text = font_story.render(story_text_content, True, (0, 0, 0))
+    story_text2 = font_story.render(story_text_content2, True, (0, 0, 0))
     story_rect = story_text.get_rect(center=(screen.get_width() / 2, screen.get_height() - 35))
     story_rect2 = story_text2.get_rect(center=(screen.get_width() / 2, screen.get_height() - 80))
     
