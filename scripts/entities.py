@@ -45,7 +45,7 @@ def get_boss(game, pos):
             'base_speed': 5,
             'offset': (-144, -128),
             'attk_count': -1,
-            'hp': 50,
+            'hp': 5,
             'spikes': []
         }
     )

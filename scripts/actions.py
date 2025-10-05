@@ -29,11 +29,11 @@ def player_atk2(player):
         
         if player['blessed']:
             utils.sound(player, "blessed_hit")
-            boss['hp'] -= 2
+            boss['hp'] -= 15
         else:
             utils.sound(player, "hit")
             player['pure'] = False
-            boss['hp'] -= 1
+            boss['hp'] -= 3
 
         if boss['hp'] <= 0:
             if player['pure']:
@@ -133,7 +133,7 @@ def boss_down2(boss):
         entities.get_spikes(
             boss['game'],
             (
-                boss['pos'][0] + boss['size'][0] // 2 - 16,
+                boss['pos'][0] + boss['size'][0] // 2 - 96 + boss['side'] * 32,
                 boss['pos'][1] + boss['size'][1] - 16
             )
         )

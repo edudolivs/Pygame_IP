@@ -102,19 +102,22 @@ def main():
             },
             "endings": {
                 "blessed_victory": {
-                    'img': pygame.image.load("data/imgs/endings/blessed_ending.jpg"),
-                    'text': "Sua alma se manteve pura. O reino está a salvo.",
+                    'img': pygame.image.load("data/imgs/endings/blessed_ending.png"),
+                    'text': "Você foi curado da loucura, ganha alta e sai feliz com sua família.",
+                    'text2': "Após anos internado acreditando que era um cavaleiro",
                     'theme': "data/sounds/endings/blessed_ending.mp3"
                 },
-                    'corrupt_victory': {
-                    'img': pygame.image.load("data/imgs/endings/corrupt_ending.jpg"),
-                    'text': "O poder do rei louco agora é seu. A que custo?",
-                    'theme': "data/sounds/endings/corrupt_ending.mp3"
-                },
-                    "common_victory": {
+                    'common_victory': {
                     'img': pygame.image.load("data/imgs/endings/common_ending.png"),
-                    'text': "O tirano foi derrotado. O reino respira aliviado.",
+                    'text': "Mas algo não parece estar certo...",
+                    'text2': "Você derrotou o rei e ganha uma vida próspera no reino.",
                     'theme': "data/sounds/endings/common_ending.mp3"
+                },
+                    "corrupt_victory": {
+                    'img': pygame.image.load("data/imgs/endings/corrupt_ending.png"),
+                    'text': "Mais um dia no hospício, você acorda ainda achando que é um cavaleiro.",
+                    'text2': "",
+                    'theme': "data/sounds/endings/corrupt_ending.mp3"
                 } 
             },
             'player':{
@@ -149,23 +152,23 @@ def main():
         },
         'sounds':{
             'player': {
-                'jump': pygame.mixer.Sound("data/sounds/player/jump.mp3"),
-                "atk2": pygame.mixer.Sound("data/sounds/player/atk2.mp3"),
+                'jump': pygame.mixer.Sound("data/sounds/player/jump2.mp3"),
+                "atk2": pygame.mixer.Sound("data/sounds/player/atk2-2.mp3"),
                 "roll": pygame.mixer.Sound("data/sounds/player/roll.mp3"),
                 'morri': pygame.mixer.Sound('data/sounds/player/morri.mp3'),
-                "hit": pygame.mixer.Sound("data/sounds/player/hit.mp3"),
+                "hit": pygame.mixer.Sound("data/sounds/player/hit2.mp3"),
                 "blessed_hit": pygame.mixer.Sound("data/sounds/player/blessed_hit.mp3")
             },
             "boss": { 
-                "up2": pygame.mixer.Sound("data/sounds/boss/up2.mp3"),
-                "spin2": pygame.mixer.Sound("data/sounds/boss/spin2.mp3"),
-                "down2": pygame.mixer.Sound("data/sounds/boss/down2.mp3"),
+                "up2": pygame.mixer.Sound("data/sounds/boss/hit.mp3"),
+                "spin2": pygame.mixer.Sound("data/sounds/boss/boss_slash.mp3"),
+                "down2": pygame.mixer.Sound("data/sounds/boss/down.mp3"),
             },
             "ui": {
                 "click": pygame.mixer.Sound("data/sounds/ui/click.ogg"),
             },
             "music": { 
-                "main_theme": "data/sounds/music/music.mp3",
+                "main_theme": "data/sounds/music/battle.mp3",
                 "main_menu": "data/sounds/music/main_menu_theme.mp3"
             }
         }
