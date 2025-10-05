@@ -26,6 +26,7 @@ def get_player(game, pos):
             'mov': [False, False],
             'blessed': False,
             'pure': True,
+            'corrupt': True,
             'base_speed': 10,
             'offset': (-144, -256),
             'on_ground': True,

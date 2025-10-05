@@ -29,7 +29,7 @@ def player_atk2(player):
     if pygame.Rect(*pos, *hitbox).colliderect(entities.rect(boss)):
         
         if player['blessed']:
-            boss['hp'] -= 5
+            boss['hp'] -= 20
         else:
             player['pure'] = False
             boss['hp'] -= 1
@@ -37,6 +37,8 @@ def player_atk2(player):
         if boss['hp'] <= 0:
             if player['pure']:
                 player['game']['choice'] = 'victory' # TODO 'blessed_victory'
+            elif player['corrupt']:
+                player['game']['choice'] = 'victory' # TODO 'corrupt_victory'
             else:
                 player['game']['choice'] = "victory"
 
@@ -54,6 +56,7 @@ def player_pray(player):
 
 def player_end_pray(player):
     player['blessed'] = True
+    player['corrupt'] = False
     idle(player)
 
 def player_hurt(player):
