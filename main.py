@@ -17,6 +17,10 @@ def game_loop(screen, clock, ASSETS, options):
     player = game['player']
     boss = game['boss']
 
+    pygame.mixer.music.load(ASSETS["sounds"]["music"]["main_theme"])
+    pygame.mixer.music.set_volume(options["volume"])
+    pygame.mixer.music.play(-1)
+
     game['choice'] = 'play'
     while game['choice'] == 'play':
 
@@ -99,15 +103,18 @@ def main():
             "endings": {
                 "blessed_victory": {
                     'img': pygame.image.load("data/imgs/endings/blessed_ending.jpg"),
-                    'text': "Sua alma se manteve pura. O reino está a salvo."
+                    'text': "Sua alma se manteve pura. O reino está a salvo.",
+                    'theme': "data/sounds/endings/blessed_ending.mp3"
                 },
                     'corrupt_victory': {
                     'img': pygame.image.load("data/imgs/endings/corrupt_ending.jpg"),
-                    'text': "O poder do rei louco agora é seu. A que custo?"
+                    'text': "O poder do rei louco agora é seu. A que custo?",
+                    'theme': "data/sounds/endings/corrupt_ending.mp3"
                 },
                     "common_victory": {
                     'img': pygame.image.load("data/imgs/endings/common_ending.png"),
-                    'text': "O tirano foi derrotado. O reino respira aliviado."
+                    'text': "O tirano foi derrotado. O reino respira aliviado.",
+                    'theme': "data/sounds/endings/common_ending.mp3"
                 } 
             },
             'player':{
@@ -145,7 +152,9 @@ def main():
                 'jump': pygame.mixer.Sound("data/sounds/player/jump.mp3"),
                 "atk2": pygame.mixer.Sound("data/sounds/player/atk2.mp3"),
                 "roll": pygame.mixer.Sound("data/sounds/player/roll.mp3"),
-                'morri': pygame.mixer.Sound('data/sounds/player/morri.mp3')
+                'morri': pygame.mixer.Sound('data/sounds/player/morri.mp3'),
+                "hit": pygame.mixer.Sound("data/sounds/player/hit.mp3"),
+                "blessed_hit": pygame.mixer.Sound("data/sounds/player/blessed_hit.mp3")
             },
             "boss": { 
                 "up2": pygame.mixer.Sound("data/sounds/boss/up2.mp3"),
@@ -156,10 +165,13 @@ def main():
                 "click": pygame.mixer.Sound("data/sounds/ui/click.ogg"),
             },
             "music": { 
-                "main_theme": "data/sounds/music/music.ogg"
+                "main_theme": "data/sounds/music/music.mp3",
+                "main_menu": "data/sounds/music/main_menu_theme.mp3"
             }
         }
     }
+    icon = ASSETS["imgs"]["window"]["icon"]
+    pygame.display.set_icon(icon)
 
     choice = 'main_menu'
     while choice != 'quit':

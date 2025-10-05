@@ -59,7 +59,7 @@ def main_menu(screen, clock, options, ASSETS):
 
     buttons = [play_button, options_button, quit_button]
 
-    pygame.mixer.music.load(ASSETS["sounds"]["music"]["main_theme"])
+    pygame.mixer.music.load(ASSETS["sounds"]["music"]["main_menu"])
     pygame.mixer.music.set_volume(options["volume"])
     pygame.mixer.music.play(-1)
 
@@ -299,6 +299,12 @@ def victory_menu(screen, clock, options, ASSETS, victory_type):
     ending_data = ASSETS['imgs']['endings'][victory_type]
     story_img = ending_data['img']
     story_text_content = ending_data['text']
+
+    theme_path = ending_data["theme"]
+
+    pygame.mixer.music.load(theme_path) 
+    pygame.mixer.music.set_volume(options["volume"]) 
+    pygame.mixer.music.play(-1)
 
     img_rect = story_img.get_rect(topleft=(0, 0))
     

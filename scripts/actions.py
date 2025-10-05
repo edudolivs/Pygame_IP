@@ -23,14 +23,15 @@ def player_atk2(player):
         player['pos'][0] + player['size'][0] // 2 - hitbox[0] // 2 + player['side'] * hitbox[0] // 2,
         player['pos'][1] + player['size'][1] - hitbox[1]
     )
-    #pygame.draw.rect(player['game']['screen'], 'red', (*pos, *hitbox))
 
     boss = player['game']['boss']
     if pygame.Rect(*pos, *hitbox).colliderect(entities.rect(boss)):
         
         if player['blessed']:
-            boss['hp'] -= 20
+            utils.sound(player, "blessed_hit")
+            boss['hp'] -= 2
         else:
+            utils.sound(player, "hit")
             player['pure'] = False
             boss['hp'] -= 1
 
@@ -60,6 +61,7 @@ def player_end_pray(player):
     idle(player)
 
 def player_hurt(player):
+    utils.sound(player, "hit")
     player['on_ground'] = False
     player['action'] = 'stunned'
     player['vel'] = [player['side'] * -1, -20]
