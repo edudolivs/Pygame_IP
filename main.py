@@ -98,11 +98,11 @@ def main():
             },
             "endings": {
                 "blessed_victory": {
-                    'img': pygame.image.load("data/imgs/endings/blessed_ending.jpeg"),
+                    'img': pygame.image.load("data/imgs/endings/blessed_ending.jpg"),
                     'text': "Sua alma se manteve pura. O reino está a salvo."
                 },
                     'corrupt_victory': {
-                    'img': pygame.image.load("data/imgs/endings/corrupt_ending.jpeg"),
+                    'img': pygame.image.load("data/imgs/endings/corrupt_ending.jpg"),
                     'text': "O poder do rei louco agora é seu. A que custo?"
                 },
                     "common_victory": {
