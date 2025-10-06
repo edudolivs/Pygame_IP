@@ -105,13 +105,13 @@ def main():
                     'img': pygame.image.load("data/imgs/endings/blessed_ending.png"),
                     'text': "Você foi curado da loucura, ganha alta e sai feliz com sua família.",
                     'text2': "Após anos internado acreditando que era um cavaleiro",
-                    'theme': "data/sounds/endings/blessed_ending.mp3"
+                    'theme': "data/sounds/endings/sakamoto.mp3"
                 },
                     'common_victory': {
                     'img': pygame.image.load("data/imgs/endings/common_ending.png"),
                     'text': "Mas algo não parece estar certo...",
                     'text2': "Você derrotou o rei e ganha uma vida próspera no reino.",
-                    'theme': "data/sounds/endings/common_ending.mp3"
+                    'theme': "data/sounds/endings/Daft.mp3"
                 },
                     "corrupt_victory": {
                     'img': pygame.image.load("data/imgs/endings/corrupt_ending.png"),

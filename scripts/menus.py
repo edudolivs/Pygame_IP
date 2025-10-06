@@ -339,7 +339,7 @@ def victory_menu(screen, clock, options, ASSETS, victory_type):
     while waiting:
         for event in pygame.event.get():
             if event.type == pygame.QUIT: return "quit"
-            if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN: waiting = False
+            if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or event.type == pygame.MOUSEBUTTONDOWN: waiting = False
         if pygame.time.get_ticks() - start_time > DISPLAY_DURATION: waiting = False
         clock.tick(60)
 
