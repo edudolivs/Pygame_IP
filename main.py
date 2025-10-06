@@ -111,7 +111,7 @@ def main():
                     'img': pygame.image.load("data/imgs/endings/common_ending.png"),
                     'text': "Mas algo não parece estar certo...",
                     'text2': "Você derrotou o rei e ganha uma vida próspera no reino.",
-                    'theme': "data/sounds/endings/Daft.mp3"
+                    'theme': "data/sounds/endings/daft.mp3"
                 },
                     "corrupt_victory": {
                     'img': pygame.image.load("data/imgs/endings/corrupt_ending.png"),
@@ -168,6 +168,7 @@ def main():
                 "click": pygame.mixer.Sound("data/sounds/ui/click.ogg"),
             },
             "music": { 
+                "death_theme": "data/sounds/music/music.mp3",
                 "main_theme": "data/sounds/music/battle.mp3",
                 "main_menu": "data/sounds/music/main_menu_theme.mp3"
             }

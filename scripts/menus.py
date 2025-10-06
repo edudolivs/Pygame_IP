@@ -112,7 +112,7 @@ def death_menu(screen, clock, options, ASSETS):
 
     buttons = [retry_button, main_menu_button]
 
-    pygame.mixer.music.load(ASSETS["sounds"]["music"]["main_theme"])
+    pygame.mixer.music.load(ASSETS["sounds"]["music"]["death_theme"])
     pygame.mixer.music.set_volume(options["volume"])
     pygame.mixer.music.play(-1)
 
@@ -120,7 +120,7 @@ def death_menu(screen, clock, options, ASSETS):
     fundo.set_alpha(4)
     fundo.fill('dark red')
 
-    for i in range(61):
+    for i in range(64):
         
         screen.blit(fundo, (0,0))
         pygame.display.flip()
@@ -292,7 +292,6 @@ def victory_menu(screen, clock, options, ASSETS, victory_type):
     font_story = pygame.font.Font("Jacquard24-Regular.ttf", 48)
 
     FADE_SPEED = 50
-    DISPLAY_DURATION = 50000 
 
     ending_data = ASSETS['imgs']['endings'][victory_type]
     story_img = ending_data['img']
@@ -326,26 +325,24 @@ def victory_menu(screen, clock, options, ASSETS, victory_type):
 
     for alpha in range(0, 256, FADE_SPEED):
         for event in pygame.event.get():
-            if event.type == pygame.QUIT: return "quit"
-            if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-                draw_scene(255)
-                pygame.time.wait(1500) 
-                return "main_menu"
+            if event.type == pygame.QUIT:
+                return "quit"
         draw_scene(alpha)
     draw_scene(255)
 
-    start_time = pygame.time.get_ticks()
     waiting = True
     while waiting:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT: return "quit"
-            if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or event.type == pygame.MOUSEBUTTONDOWN: waiting = False
-        if pygame.time.get_ticks() - start_time > DISPLAY_DURATION: waiting = False
+            if event.type == pygame.QUIT:
+                return "quit"
+            if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or event.type == pygame.MOUSEBUTTONDOWN:
+                waiting = False
         clock.tick(60)
 
     for alpha in range(255, -1, -FADE_SPEED):
         for event in pygame.event.get():
-            if event.type == pygame.QUIT: return "quit"
+            if event.type == pygame.QUIT:
+                return "quit"
         draw_scene(alpha)
     draw_scene(0)
 
