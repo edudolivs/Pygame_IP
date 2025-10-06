@@ -115,8 +115,8 @@ def main():
                 },
                     "corrupt_victory": {
                     'img': pygame.image.load("data/imgs/endings/corrupt_ending.png"),
-                    'text': "Mais um dia no hospício, você acorda ainda achando que é um cavaleiro.",
-                    'text2': "",
+                    'text': "Você acorda ainda achando que é um cavaleiro.",
+                    'text2': "Mais um dia no hospício...",
                     'theme': "data/sounds/endings/corrupt_ending.mp3"
                 } 
             },

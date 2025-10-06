@@ -33,7 +33,7 @@ def player_atk2(player):
         else:
             utils.sound(player, "hit")
             player['pure'] = False
-            boss['hp'] -= 3
+            boss['hp'] -= 5
 
         if boss['hp'] <= 0:
             if player['pure']:

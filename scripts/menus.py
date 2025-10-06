@@ -287,8 +287,6 @@ def options_menu(screen, clock, options, return_to, ASSETS):
     
     return choice
 
-import pygame
-
 def victory_menu(screen, clock, options, ASSETS, victory_type):
     font_title = pygame.font.Font("Jacquard24-Regular.ttf", 150)
     font_story = pygame.font.Font("Jacquard24-Regular.ttf", 48)
